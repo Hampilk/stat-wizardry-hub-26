@@ -1,0 +1,380 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* WinMix Design System v1.0 - Hungarian Sports Statistics Platform
+All colors MUST be HSL format. Uses Geist Sans/Mono fonts with glassmorphism effects.
+*/
+
+@layer base {
+  :root {
+    /* WinMix Core Colors - Deep Black Theme */
+    --background: 0 0% 9%;                    /* Deep black #171717 */
+    --foreground: 0 0% 98%;                   /* Pure white #FAFAFA */
+
+    --card: 0 0% 0% / 0.2;                    /* Glass card bg */
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 0% / 0.9;                 /* Solid popover bg */
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 262 83% 75%;                   /* Violet primary #A855F7 */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 3.7% 45%;                /* Zinc-600 #71717A */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15%;                    /* Zinc-800 #27272A */
+    --muted-foreground: 240 5% 65%;           /* Zinc-400 #A1A1AA */
+
+    --accent: 262 83% 75%;                    /* Violet accent */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 72% 51%;                 /* Red #EF4444 */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 100% / 0.1;                /* Glass border */
+    --input: 240 3.7% 15% / 0.6;              /* Glass input bg */
+    --ring: 262 83% 75%;
+
+    --radius: 0.75rem;
+
+    /* WinMix Brand Colors */
+    --winmix-violet: 262 83% 75%;             /* #A855F7 - Primary violet */
+    --winmix-violet-dark: 262 83% 58%;        /* #8B5CF6 - Darker violet */
+    --winmix-purple: 258 90% 66%;             /* #7C3AED - Purple accent */
+    
+    /* Neutral Palette */
+    --zinc-100: 240 4.8% 95.9%;              /* #F4F4F5 */
+    --zinc-200: 240 5.9% 90%;                /* #E4E4E7 */
+    --zinc-300: 240 4.9% 83.9%;              /* #D4D4D8 */
+    --zinc-400: 240 5% 64.9%;                /* #A1A1AA */
+    --zinc-500: 240 3.8% 46.1%;              /* #71717A */
+    --zinc-700: 240 5.2% 33.9%;              /* #3F3F46 */
+    --zinc-800: 240 3.7% 15.9%;              /* #27272A */
+    --zinc-900: 240 5.9% 10%;                /* #18181B */
+
+    /* Semantic Colors */
+    --success: 142 76% 36%;                   /* #10B981 */
+    --warning: 38 92% 50%;                    /* #F59E0B */
+    --error: 0 72% 51%;                       /* #EF4444 */
+    --info: 221 83% 53%;                      /* #3B82F6 */
+
+    /* Chart Colors (WinMix Data Viz Palette) */
+    --chart-1: 221 83% 53%;                   /* Blue #3B82F6 */
+    --chart-2: 142 76% 36%;                   /* Green #10B981 */
+    --chart-3: 38 92% 50%;                    /* Yellow #F59E0B */
+    --chart-4: 262 83% 75%;                   /* Purple #A855F7 */
+    --chart-5: 25 95% 53%;                    /* Orange #FF6B35 */
+
+    /* Glassmorphism Effects */
+    --glass-bg: 0 0% 0% / 0.2;                /* 20% black glass */
+    --glass-bg-light: 0 0% 100% / 0.05;       /* 5% white glass */
+    --glass-border: 0 0% 100% / 0.1;          /* 10% white border */
+    --glass-hover: 0 0% 0% / 0.3;             /* 30% black hover */
+
+    /* Advanced Gradients */
+    --gradient-violet: linear-gradient(135deg, hsl(262 83% 75%), hsl(258 90% 66%));
+    --gradient-bg: linear-gradient(180deg, hsl(262 83% 75% / 0.1) 0%, hsl(0 0% 0%) 50%);
+    --gradient-text: linear-gradient(135deg, hsl(0 0% 98%), hsl(240 5% 65%));
+
+    /* Enhanced Shadows */
+    --shadow-glow-violet: 0 0 40px hsl(262 83% 75% / 0.25);
+    --shadow-glow-strong: 0 0 60px hsl(262 83% 75% / 0.4);
+    --shadow-card: 0 25px 50px -12px hsl(0 0% 0% / 0.8);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+
+    /* Sidebar (keeping for compatibility) */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* WinMix maintains same dark theme values */
+    --background: 0 0% 9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 0% / 0.2;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 0% / 0.9;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262 83% 75%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 45%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 262 83% 75%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 100% / 0.1;
+    --input: 240 3.7% 15% / 0.6;
+    --ring: 262 83% 75%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  /* WinMix Glassmorphism System */
+  .glass-card {
+    background: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .glass-hover:hover {
+    background: hsl(var(--glass-hover));
+    border-color: hsl(var(--border));
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-input {
+    background: hsl(var(--input));
+    border: 1px solid hsl(var(--border)) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-input:focus {
+    border-color: hsl(var(--ring)) !important;
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+  }
+
+  /* WinMix Typography Scale */
+  .winmix-hero {
+    @apply text-4xl font-bold tracking-tight;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .winmix-section-title {
+    @apply text-2xl font-semibold tracking-tight text-foreground;
+  }
+
+  .winmix-card-title {
+    @apply text-lg font-medium text-foreground;
+  }
+
+  /* Enhanced Hover Effects */
+  .winmix-hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .winmix-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow-violet);
+  }
+
+  .winmix-hover-glow:hover {
+    box-shadow: var(--shadow-glow-strong);
+    border-color: hsl(var(--primary) / 0.5);
+  }
+
+  .winmix-hover-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .winmix-hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  /* Progress Bar System */
+  .winmix-progress {
+    background: hsl(var(--muted));
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .winmix-progress-fill {
+    height: 100%;
+    background: var(--gradient-violet);
+    transition: width 0.5s ease-out;
+    border-radius: inherit;
+  }
+
+  /* Button Variants */
+  .winmix-btn-primary {
+    background: var(--gradient-violet);
+    border: 1px solid hsl(var(--primary) / 0.3);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .winmix-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px hsl(var(--primary) / 0.4);
+  }
+
+  .winmix-btn-glass {
+    background: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .winmix-btn-glass:hover {
+    background: hsl(var(--glass-hover));
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+  }
+
+  /* Custom Scrollbar */
+  .winmix-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .winmix-scroll::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+
+  .winmix-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.6);
+    border-radius: 3px;
+  }
+
+  .winmix-scroll::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+
+  /* Modern Scrollbar for Dropdowns */
+  .scrollbar-modern {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.4) transparent;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.4));
+    border-radius: 10px;
+    border: none;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.6));
+  }
+
+  /* Animation Utilities */
+  .winmix-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .winmix-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Focus Styles for Accessibility */
+  .winmix-focus:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Statistics Card Specific Styles */
+  .winmix-stat-card {
+    background: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-glass);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .winmix-stat-card:hover {
+    background: hsl(var(--glass-hover));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow-violet);
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
+  /* Table Styles */
+  .winmix-table {
+    background: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .winmix-table thead {
+    background: hsl(var(--muted) / 0.5);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .winmix-table tbody tr:hover {
+    background: hsl(var(--glass-hover));
+  }
+
+  /* Loading States */
+  .winmix-skeleton {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted) / 0.3) 25%, 
+      hsl(var(--muted) / 0.6) 50%, 
+      hsl(var(--muted) / 0.3) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Navigation Styles */
+  .winmix-nav {
+    background: hsl(var(--background) / 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .winmix-nav-item {
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+  }
+
+  .winmix-nav-item:hover {
+    color: hsl(var(--foreground));
+    border-bottom-color: hsl(var(--primary) / 0.3);
+  }
+
+  .winmix-nav-item.active {
+    color: hsl(var(--primary));
+    border-bottom-color: hsl(var(--primary));
+  }
+}
