@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WinMix - Magyar Labdarúgó Statisztikai Központ</title>
+    <meta name="description" content="Professzionális labdarúgó statisztikák és elemzések. Fedezd fel a Getafe vs San Sebastian mérkőzések részletes adatait és trendeket a WinMix platformon." />
+    <meta name="author" content="WinMix" />
+
+    <meta property="og:title" content="WinMix - Magyar Labdarúgó Statisztikai Központ" />
+    <meta property="og:description" content="Professzionális labdarúgó statisztikák és elemzések. Fedezd fel a Getafe vs San Sebastian mérkőzések részletes adatait és trendeket." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@winmix_stats" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* WinMix Design System CSS */
+        :root {
+            /* WinMix Core Colors - Deep Black Theme */
+            --background: 0 0% 9%;                    /* Deep black #171717 */
+            --foreground: 0 0% 98%;                   /* Pure white #FAFAFA */
+
+            --card: 0 0% 0% / 0.2;                    /* Glass card bg */
+            --card-foreground: 0 0% 98%;
+
+            --popover: 0 0% 0% / 0.9;                 /* Solid popover bg */
+            --popover-foreground: 0 0% 98%;
+
+            --primary: 262 83% 75%;                   /* Violet primary #A855F7 */
+            --primary-foreground: 0 0% 98%;
+
+            --secondary: 240 3.7% 45%;                /* Zinc-600 #71717A */
+            --secondary-foreground: 0 0% 98%;
+
+            --muted: 240 3.7% 15%;                    /* Zinc-800 #27272A */
+            --muted-foreground: 240 5% 65%;           /* Zinc-400 #A1A1AA */
+
+            --accent: 262 83% 75%;                    /* Violet accent */
+            --accent-foreground: 0 0% 98%;
+
+            --destructive: 0 72% 51%;                 /* Red #EF4444 */
+            --destructive-foreground: 0 0% 98%;
+
+            --border: 0 0% 100% / 0.1;                /* Glass border */
+            --input: 240 3.7% 15% / 0.6;              /* Glass input bg */
+            --ring: 262 83% 75%;
+
+            --radius: 0.75rem;
+
+            /* WinMix Brand Colors */
+            --winmix-violet: 262 83% 75%;             /* #A855F7 - Primary violet */
+            --winmix-violet-dark: 262 83% 58%;        /* #8B5CF6 - Darker violet */
+            --winmix-purple: 258 90% 66%;             /* #7C3AED - Purple accent */
+            
+            /* Chart Colors (WinMix Data Viz Palette) */
+            --chart-1: 221 83% 53%;                   /* Blue #3B82F6 */
+            --chart-2: 142 76% 36%;                   /* Green #10B981 */
+            --chart-3: 38 92% 50%;                    /* Yellow #F59E0B */
+            --chart-4: 262 83% 75%;                   /* Purple #A855F7 */
+            --chart-5: 25 95% 53%;                    /* Orange #FF6B35 */
+
+            /* Glassmorphism Effects */
+            --glass-bg: 0 0% 0% / 0.2;                /* 20% black glass */
+            --glass-bg-light: 0 0% 100% / 0.05;       /* 5% white glass */
+            --glass-border: 0 0% 100% / 0.1;          /* 10% white border */
+            --glass-hover: 0 0% 0% / 0.3;             /* 30% black hover */
+
+            /* Advanced Gradients */
+            --gradient-violet: linear-gradient(135deg, hsl(262 83% 75%), hsl(258 90% 66%));
+            --gradient-bg: linear-gradient(180deg, hsl(262 83% 75% / 0.1) 0%, hsl(0 0% 0%) 50%);
+            --gradient-text: linear-gradient(135deg, hsl(0 0% 98%), hsl(240 5% 65%));
+
+            /* Enhanced Shadows */
+            --shadow-glow-violet: 0 0 40px hsl(262 83% 75% / 0.25);
+            --shadow-glow-strong: 0 0 60px hsl(262 83% 75% / 0.4);
+            --shadow-card: 0 25px 50px -12px hsl(0 0% 0% / 0.8);
+            --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+        }
+
+        body {
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* WinMix Glassmorphism System */
+        .glass-card {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-glass);
+        }
+
+        .glass-hover:hover {
+            background: hsl(var(--glass-hover));
+            border-color: hsl(var(--border));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input {
+            background: hsl(var(--input));
+            border: 1px solid hsl(var(--border)) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .glass-input:focus {
+            border-color: hsl(var(--ring)) !important;
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+        }
+
+        /* WinMix Typography Scale */
+        .winmix-hero {
+            font-size: 2.25rem;
+            font-weight: bold;
+            letter-spacing: -0.025em;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .winmix-section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: hsl(var(--foreground));
+        }
+
+        .winmix-card-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        /* Enhanced Hover Effects */
+        .winmix-hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .winmix-hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow-violet);
+        }
+
+        .winmix-hover-glow:hover {
+            box-shadow: var(--shadow-glow-strong);
+            border-color: hsl(var(--primary) / 0.5);
+        }
+
+        .winmix-hover-scale {
+            transition: transform 0.2s ease;
+        }
+
+        .winmix-hover-scale:hover {
+            transform: scale(1.02);
+        }
+
+        /* Button Variants */
+        .winmix-btn-primary {
+            background: var(--gradient-violet);
+            border: 1px solid hsl(var(--primary) / 0.3);
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+            transition: all 0.2s ease;
+            color: hsl(var(--primary-foreground));
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .winmix-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px hsl(var(--primary) / 0.4);
+        }
+
+        .winmix-btn-glass {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .winmix-btn-glass:hover {
+            background: hsl(var(--glass-hover));
+            border-color: hsl(var(--primary) / 0.3);
+            box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        /* Animation Utilities */
+        .winmix-fade-in {
+            animation: fade-in 0.6s ease-out;
+        }
+
+        .winmix-slide-up {
+            animation: slide-up 0.6s ease-out;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Focus Styles for Accessibility */
+        .winmix-focus:focus-visible {
+            outline: 2px solid hsl(var(--primary));
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Statistics Card Specific Styles */
+        .winmix-stat-card {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-glass);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .winmix-stat-card:hover {
+            background: hsl(var(--glass-hover));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow-violet);
+            border-color: hsl(var(--primary) / 0.3);
+        }
+
+        /* Progress Bar System */
+        .winmix-progress {
+            background: hsl(var(--muted));
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+            height: 0.5rem;
+            width: 100%;
+        }
+
+        .winmix-progress-fill {
+            height: 100%;
+            background: var(--gradient-violet);
+            transition: width 0.5s ease-out;
+            border-radius: inherit;
+        }
+
+        /* Table Styles */
+        .winmix-table {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .winmix-table th {
+            background: hsl(var(--muted) / 0.5);
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .winmix-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .winmix-table tbody tr:hover {
+            background: hsl(var(--glass-hover));
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            height: 300px;
+        }
+
+        /* Navigation Styles */
+        .winmix-nav {
+            background: hsl(var(--background) / 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .winmix-nav-item {
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1rem;
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+        }
+
+        .winmix-nav-item:hover {
+            color: hsl(var(--foreground));
+            border-bottom-color: hsl(var(--primary) / 0.3);
+        }
+
+        .winmix-nav-item.active {
+            color: hsl(var(--primary));
+            border-bottom-color: hsl(var(--primary));
+        }
+
+        /* Form styles */
+        .form-input, .form-select {
+            background: hsl(var(--input));
+            border: 1px solid hsl(var(--border));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            color: hsl(var(--foreground));
+            width: 100%;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: hsl(var(--ring));
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+            outline: none;
+        }
+
+        /* Badge styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            padding: 0.125rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .badge-success {
+            background: hsl(142 76% 36%);
+            color: white;
+        }
+
+        .badge-error {
+            background: hsl(0 72% 51%);
+            color: white;
+        }
+
+        .badge-primary {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .badge-secondary {
+            background: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        /* Responsive utilities */
+        @media (max-width: 768px) {
+            .winmix-hero {
+                font-size: 1.875rem;
+            }
+            
+            .winmix-section-title {
+                font-size: 1.25rem;
+            }
+            
+            .responsive-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .responsive-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .responsive-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        /* Loading states */
+        .loading-spinner {
+            border: 3px solid hsl(var(--muted));
+            border-top: 3px solid hsl(var(--primary));
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Utility classes */
+        .hidden { display: none; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .block { display: block; }
+        .inline-flex { display: inline-flex; }
+        
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .flex-col { flex-direction: column; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        
+        .m-4 { margin: 1rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .min-h-screen { min-height: 100vh; }
+        .max-w-7xl { max-width: 80rem; }
+        .max-w-3xl { max-width: 48rem; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-full { border-radius: 9999px; }
+        
+        .border { border-width: 1px; }
+        .border-t { border-top-width: 1px; }
+        
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .fixed { position: fixed; }
+        .sticky { position: sticky; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .top-0 { top: 0; }
+        .z-10 { z-index: 10; }
+        .z-40 { z-index: 40; }
+        
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        .space-y-8 > * + * { margin-top: 2rem; }
+        .space-y-12 > * + * { margin-top: 3rem; }
+        
+        .overflow-hidden { overflow: hidden; }
+        .cursor-pointer { cursor: pointer; }
+        
+        .hover\:opacity-80:hover { opacity: 0.8; }
+        .transition-all { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="min-h-screen w-full relative">
+        <!-- Background Effect -->
+        <div class="absolute inset-0 z-0" style="background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139, 92, 246, 0.25), transparent 70%), #000000;"></div>
+
+        <!-- Navigation -->
+        <header class="sticky top-0 z-40 winmix-nav">
+            <div class="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg" style="background: var(--gradient-violet);">
+                        <div class="w-full h-full flex items-center justify-center text-white font-bold">W</div>
+                    </div>
+                    <span class="text-xl font-bold">WinMix</span>
+                </div>
+                
+                <nav class="flex items-center gap-6">
+                    <a href="#" class="winmix-nav-item active">Főoldal</a>
+                    <a href="#" class="winmix-nav-item">Statisztikák</a>
+                    <a href="#" class="winmix-nav-item">Elemzések</a>
+                    <a href="#" class="winmix-nav-item">Predikciók</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="mx-auto max-w-7xl px-4 py-12 space-y-12 relative z-10">
+            <!-- Hero Section -->
+            <section class="text-center space-y-4 winmix-fade-in">
+                <h1 class="winmix-hero">Mérkőzés szűrő és statisztikák</h1>
+                <p class="text-lg max-w-3xl mx-auto" style="color: hsl(var(--muted-foreground));">
+                    Szűrd a meccseket csapatokra és eseményekre, elemezd a kimeneteleket, és exportáld CSV-be a professzionális WinMix platformon.
+                </p>
+                
+                <!-- Quick Action Buttons -->
+                <div class="flex items-center justify-center gap-4 pt-4 flex-wrap">
+                    <button onclick="resetFilters()" class="winmix-btn-glass winmix-hover-lift winmix-focus">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        Visszaállítás
+                    </button>
+                    <button onclick="applyFilters()" class="winmix-btn-primary winmix-hover-lift winmix-focus">
+                        <i data-lucide="filter" class="w-4 h-4"></i>
+                        Szűrés
+                    </button>
+                    <button onclick="exportCSV()" class="winmix-btn-glass winmix-hover-lift winmix-focus">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        CSV export
+                    </button>
+                    <button onclick="openPredictionModal()" class="winmix-btn-primary winmix-hover-lift winmix-focus">
+                        <i data-lucide="brain" class="w-4 h-4"></i>
+                        Predikció készítése
+                    </button>
+                </div>
+            </section>
+
+            <!-- Filter Section -->
+            <section class="winmix-slide-up">
+                <div class="winmix-stat-card">
+                    <h2 class="winmix-section-title mb-6">Szűrők</h2>
+                    
+                    <div class="grid responsive-grid gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: hsl(var(--foreground));">Hazai csapat</label>
+                            <input type="text" id="homeTeamFilter" placeholder="Pl. Real Madrid" class="form-input">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: hsl(var(--foreground));">Vendég csapat</label>
+                            <input type="text" id="awayTeamFilter" placeholder="Pl. Barcelona" class="form-input">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: hsl(var(--foreground));">Liga</label>
+                            <select id="leagueFilter" class="form-select">
+                                <option value="">Összes liga</option>
+                                <option value="Premier League">Premier League</option>
+                                <option value="La Liga">La Liga</option>
+                                <option value="Bundesliga">Bundesliga</option>
+                                <option value="Serie A">Serie A</option>
+                                <option value="Ligue 1">Ligue 1</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: hsl(var(--foreground));">BTTS</label>
+                            <select id="bttsFilter" class="form-select">
+                                <option value="">Mindegy</option>
+                                <option value="true">Igen</option>
+                                <option value="false">Nem</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Cards -->
+            <section class="winmix-slide-up">
+                <div class="grid responsive-grid">
+                    <div class="winmix-stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="winmix-card-title">Összes mérkőzés</h3>
+                            <i data-lucide="calendar" class="w-5 h-5" style="color: hsl(var(--primary));"></i>
+                        </div>
+                        <div class="text-3xl font-bold mb-2" id="totalMatches">1,247</div>
+                        <div class="text-sm" style="color: hsl(var(--muted-foreground));">Az elmúlt évben</div>
+                    </div>
+                    
+                    <div class="winmix-stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="winmix-card-title">BTTS %</h3>
+                            <i data-lucide="target" class="w-5 h-5" style="color: hsl(var(--chart-2));"></i>
+                        </div>
+                        <div class="text-3xl font-bold mb-2" id="bttsPercentage">68.3%</div>
+                        <div class="winmix-progress">
+                            <div class="winmix-progress-fill" style="width: 68.3%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="winmix-stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="winmix-card-title">Fordítások</h3>
+                            <i data-lucide="repeat" class="w-5 h-5" style="color: hsl(var(--chart-3));"></i>
+                        </div>
+                        <div class="text-3xl font-bold mb-2" id="comebacks">142</div>
+                        <div class="text-sm" style="color: hsl(var(--muted-foreground));">11.4% az összes meccsből</div>
+                    </div>
+                    
+                    <div class="winmix-stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="winmix-card-title">Átlag gólok</h3>
+                            <i data-lucide="activity" class="w-5 h-5" style="color: hsl(var(--chart-5));"></i>
+                        </div>
+                        <div class="text-3xl font-bold mb-2" id="avgGoals">2.67</div>
+                        <div class="text-sm" style="color: hsl(var(--muted-foreground));">Per mérkőzés</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="winmix-slide-up">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Goals Distribution Chart -->
+                    <div class="chart-container">
+                        <h3 class="winmix-card-title mb-4">Gólok eloszlása</h3>
+                        <canvas id="goalsChart" class="w-full h-full"></canvas>
+                    </div>
+                    
+                    <!-- BTTS Chart -->
+                    <div class="chart-container">
+                        <h3 class="winmix-card-title mb-4">BTTS statisztikák</h3>
+                        <canvas id="bttsChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Table -->
+            <section class="winmix-slide-up">
+                <div class="winmix-stat-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="winmix-section-title">Mérkőzés eredmények</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm" style="color: hsl(var(--muted-foreground));">Összesen: <span id="resultsCount">1,247</span> mérkőzés</span>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-hidden">
+                        <table class="winmix-table">
+                            <thead>
+                                <tr>
+                                    <th>Hazai csapat</th>
+                                    <th>Vendég csapat</th>
+                                    <th>Félidő</th>
+                                    <th>Végeredmény</th>
+                                    <th>BTTS</th>
+                                    <th>Fordítás</th>
+                                    <th>Dátum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                                <!-- Dynamic content will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between mt-6">
+                        <div class="flex items-center gap-2">
+                            <button onclick="previousPage()" class="winmix-btn-glass">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                Előző
+                            </button>
+                            <span class="text-sm" style="color: hsl(var(--muted-foreground));">
+                                Oldal <span id="currentPage">1</span> / <span id="totalPages">25</span>
+                            </span>
+                            <button onclick="nextPage()" class="winmix-btn-glass">
+                                Következő
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm" style="color: hsl(var(--muted-foreground));">Sorok per oldal:</label>
+                            <select id="rowsPerPage" class="form-select" style="width: auto;" onchange="changeRowsPerPage()">
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-24 border-t py-8" style="border-color: hsl(var(--border)); background: hsl(var(--background) / 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+            <div class="mx-auto max-w-7xl px-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--gradient-violet);">
+                            <span class="text-white font-bold">W</span>
+                        </div>
+                        <span class="text-sm" style="color: hsl(var(--muted-foreground));">
+                            © 2024 WinMix. Minden jog fenntartva.
+                        </span>
+                    </div>
+                    <span class="text-sm" style="color: hsl(var(--muted-foreground));">
+                        Magyar sports analytics platform
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Prediction Modal -->
+    <div id="predictionModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="winmix-section-title">Predikció készítése</h2>
+                <button onclick="closePredictionModal()" class="text-2xl" style="color: hsl(var(--muted-foreground));">×</button>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <h3 class="winmix-card-title mb-4">AI alapú predikciók 8 mérkőzésre</h3>
+                    <div class="text-sm mb-4" style="color: hsl(var(--muted-foreground));">
+                        A rendszer különböző algoritmusokat használ a legpontosabb előrejelzések érdekében.
+                    </div>
+                </div>
+                
+                <div id="predictionResults" class="space-y-4">
+                    <!-- Prediction results will be inserted here -->
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="generatePredictions()" class="winmix-btn-primary">
+                        <i data-lucide="brain" class="w-4 h-4"></i>
+                        Predikciók generálása
+                    </button>
+                    <button onclick="closePredictionModal()" class="winmix-btn-glass">
+                        Bezárás
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="modal-overlay hidden">
+        <div class="flex flex-col items-center gap-4">
+            <div class="loading-spinner"></div>
+            <p style="color: hsl(var(--foreground));">Betöltés...</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mock data for demonstration
+        const mockMatches = [
+            {
+                homeTeam: "Real Madrid",
+                awayTeam: "Barcelona", 
+                halfTime: "1-0",
+                fullTime: "2-1",
+                btts: true,
+                comeback: false,
+                date: "2024-03-15",
+                league: "La Liga"
+            },
+            {
+                homeTeam: "Liverpool",
+                awayTeam: "Manchester City",
+                halfTime: "0-2", 
+                fullTime: "3-2",
+                btts: true,
+                comeback: true,
+                date: "2024-03-14",
+                league: "Premier League"
+            },
+            {
+                homeTeam: "Bayern Munich",
+                awayTeam: "Borussia Dortmund",
+                halfTime: "1-1",
+                fullTime: "2-1", 
+                btts: true,
+                comeback: false,
+                date: "2024-03-13",
+                league: "Bundesliga"
+            },
+            {
+                homeTeam: "Juventus",
+                awayTeam: "AC Milan",
+                halfTime: "0-0",
+                fullTime: "1-0",
+                btts: false,
+                comeback: false,
+                date: "2024-03-12",
+                league: "Serie A"
+            },
+            {
+                homeTeam: "PSG",
+                awayTeam: "Marseille",
+                halfTime: "2-0",
+                fullTime: "3-1",
+                btts: true,
+                comeback: false,
+                date: "2024-03-11",
+                league: "Ligue 1"
+            }
+        ];
+
+        let currentPage = 1;
+        let rowsPerPage = 25;
+        let filteredMatches = [...mockMatches];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMatches();
+            initializeCharts();
+            updateStatistics();
+        });
+
+        // Filter functions
+        function applyFilters() {
+            showLoading();
+            
+            setTimeout(() => {
+                const homeTeam = document.getElementById('homeTeamFilter').value.toLowerCase();
+                const awayTeam = document.getElementById('awayTeamFilter').value.toLowerCase();
+                const league = document.getElementById('leagueFilter').value;
+                const btts = document.getElementById('bttsFilter').value;
+
+                filteredMatches = mockMatches.filter(match => {
+                    return (!homeTeam || match.homeTeam.toLowerCase().includes(homeTeam)) &&
+                           (!awayTeam || match.awayTeam.toLowerCase().includes(awayTeam)) &&
+                           (!league || match.league === league) &&
+                           (!btts || match.btts.toString() === btts);
+                });
+
+                currentPage = 1;
+                loadMatches();
+                updateStatistics();
+                hideLoading();
+                
+                showToast("Szűrők alkalmazva", "Eredmények frissítve");
+            }, 500);
+        }
+
+        function resetFilters() {
+            document.getElementById('homeTeamFilter').value = '';
+            document.getElementById('awayTeamFilter').value = '';
+            document.getElementById('leagueFilter').value = '';
+            document.getElementById('bttsFilter').value = '';
+            
+            filteredMatches = [...mockMatches];
+            currentPage = 1;
+            loadMatches();
+            updateStatistics();
+            
+            showToast("Szűrők visszaállítva", "Összes szűrő törölve");
+        }
+
+        // Table functions
+        function loadMatches() {
+            const tbody = document.getElementById('resultsTableBody');
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const pageMatches = filteredMatches.slice(startIndex, endIndex);
+
+            tbody.innerHTML = '';
+            
+            pageMatches.forEach(match => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${match.homeTeam}</td>
+                    <td>${match.awayTeam}</td>
+                    <td>${match.halfTime}</td>
+                    <td>${match.fullTime}</td>
+                    <td><span class="badge ${match.btts ? 'badge-success' : 'badge-error'}">${match.btts ? 'Igen' : 'Nem'}</span></td>
+                    <td><span class="badge ${match.comeback ? 'badge-success' : 'badge-secondary'}">${match.comeback ? 'Igen' : 'Nem'}</span></td>
+                    <td>${new Date(match.date).toLocaleDateString('hu-HU')}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update pagination
+            const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('resultsCount').textContent = filteredMatches.length;
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadMatches();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadMatches();
+            }
+        }
+
+        function changeRowsPerPage() {
+            rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+            currentPage = 1;
+            loadMatches();
+        }
+
+        // Statistics update
+        function updateStatistics() {
+            const bttsCount = filteredMatches.filter(m => m.btts).length;
+            const comebackCount = filteredMatches.filter(m => m.comeback).length;
+            const bttsPercentage = filteredMatches.length > 0 ? (bttsCount / filteredMatches.length * 100).toFixed(1) : 0;
+
+            document.getElementById('totalMatches').textContent = filteredMatches.length.toLocaleString();
+            document.getElementById('bttsPercentage').textContent = bttsPercentage + '%';
+            document.getElementById('comebacks').textContent = comebackCount;
+            
+            // Update progress bar
+            const progressBar = document.querySelector('.winmix-progress-fill');
+            if (progressBar) {
+                progressBar.style.width = bttsPercentage + '%';
+            }
+        }
+
+        // Charts initialization
+        function initializeCharts() {
+            // Goals Distribution Chart
+            const goalsCtx = document.getElementById('goalsChart').getContext('2d');
+            new Chart(goalsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['0', '1', '2', '3', '4', '5+'],
+                    datasets: [{
+                        label: 'Mérkőzések száma',
+                        data: [45, 156, 342, 298, 187, 89],
+                        backgroundColor: [
+                            'hsl(221, 83%, 53%)',
+                            'hsl(142, 76%, 36%)', 
+                            'hsl(38, 92%, 50%)',
+                            'hsl(262, 83%, 75%)',
+                            'hsl(25, 95%, 53%)',
+                            'hsl(0, 72%, 51%)'
+                        ],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'hsl(0, 0%, 98%)'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: 'hsl(240, 5%, 65%)' },
+                            grid: { color: 'hsl(0, 0%, 100%, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: 'hsl(240, 5%, 65%)' },
+                            grid: { color: 'hsl(0, 0%, 100%, 0.1)' }
+                        }
+                    }
+                }
+            });
+
+            // BTTS Chart
+            const bttsCtx = document.getElementById('bttsChart').getContext('2d');
+            new Chart(bttsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['BTTS Igen', 'BTTS Nem'],
+                    datasets: [{
+                        data: [68.3, 31.7],
+                        backgroundColor: [
+                            'hsl(142, 76%, 36%)',
+                            'hsl(0, 72%, 51%)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'hsl(0, 0%, 98%)',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Export function
+        function exportCSV() {
+            showLoading();
+            
+            setTimeout(() => {
+                const csvContent = [
+                    ['Hazai csapat', 'Vendég csapat', 'Félidő', 'Végeredmény', 'BTTS', 'Fordítás', 'Dátum'].join(','),
+                    ...filteredMatches.map(match => [
+                        match.homeTeam,
+                        match.awayTeam,
+                        match.halfTime,
+                        match.fullTime,
+                        match.btts ? 'Igen' : 'Nem',
+                        match.comeback ? 'Igen' : 'Nem',
+                        match.date
+                    ].join(','))
+                ].join('\n');
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'merkozesek.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                hideLoading();
+                showToast("CSV export kész", `${filteredMatches.length} mérkőzés exportálva`);
+            }, 1000);
+        }
+
+        // Prediction Modal
+        function openPredictionModal() {
+            document.getElementById('predictionModal').classList.remove('hidden');
+        }
+
+        function closePredictionModal() {
+            document.getElementById('predictionModal').classList.add('hidden');
+        }
+
+        function generatePredictions() {
+            const resultsDiv = document.getElementById('predictionResults');
+            resultsDiv.innerHTML = '<div class="loading-spinner"></div>';
+            
+            setTimeout(() => {
+                const predictions = [
+                    { match: "Arsenal vs Chelsea", prediction: "BTTS: Igen", confidence: "85%" },
+                    { match: "Liverpool vs Manchester United", prediction: "Hazai győzelem", confidence: "72%" },
+                    { match: "Real Madrid vs Atletico Madrid", prediction: "Under 2.5", confidence: "68%" },
+                    { match: "Barcelona vs Valencia", prediction: "BTTS: Igen", confidence: "79%" },
+                    { match: "Bayern vs Leipzig", prediction: "Over 3.5", confidence: "74%" },
+                    { match: "Juventus vs Roma", prediction: "X", confidence: "61%" },
+                    { match: "PSG vs Lyon", prediction: "Hazai győzelem", confidence: "88%" },
+                    { match: "Napoli vs Inter", prediction: "BTTS: Nem", confidence: "66%" }
+                ];
+
+                resultsDiv.innerHTML = predictions.map(pred => `
+                    <div class="winmix-stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">${pred.match}</h4>
+                                <p class="text-sm" style="color: hsl(var(--muted-foreground));">${pred.prediction}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold" style="color: hsl(var(--primary));">${pred.confidence}</div>
+                                <div class="text-xs" style="color: hsl(var(--muted-foreground));">bizalom</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }, 2000);
+        }
+
+        // Utility functions
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function showToast(title, description) {
+            // Simple toast notification - in a real app you'd use a proper toast library
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: hsl(var(--glass-bg));
+                border: 1px solid hsl(var(--glass-border));
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 0.75rem;
+                padding: 1rem;
+                z-index: 1000;
+                color: hsl(var(--foreground));
+                box-shadow: var(--shadow-glass);
+            `;
+            
+            toast.innerHTML = `
+                <div class="font-medium">${title}</div>
+                <div class="text-sm" style="color: hsl(var(--muted-foreground));">${description}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
