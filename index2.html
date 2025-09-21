@@ -1,0 +1,2145 @@
+<!doctype html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WinMix - Magyar Labdarúgó Statisztikai Központ</title>
+    <meta name="description" content="Professzionális labdarúgó statisztikák és elemzések. Fedezd fel a Getafe vs San Sebastian mérkőzések részletes adatait és trendeket a WinMix platformon." />
+    <meta name="author" content="WinMix" />
+
+    <meta property="og:title" content="WinMix - Magyar Labdarúgó Statisztikai Központ" />
+    <meta property="og:description" content="Professzionális labdarúgó statisztikák és elemzések. Fedezd fel a Getafe vs San Sebastian mérkőzések részletes adatait és trendeket." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@winmix_stats" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* WinMix Design System CSS - Teljes implementáció a React verzió alapján */
+        :root {
+            /* WinMix Core Colors - Deep Black Theme */
+            --background: 0 0% 9%;                    /* Deep black #171717 */
+            --foreground: 0 0% 98%;                   /* Pure white #FAFAFA */
+
+            --card: 0 0% 0% / 0.2;                    /* Glass card bg */
+            --card-foreground: 0 0% 98%;
+
+            --popover: 0 0% 0% / 0.9;                 /* Solid popover bg */
+            --popover-foreground: 0 0% 98%;
+
+            --primary: 262 83% 75%;                   /* Violet primary #A855F7 */
+            --primary-foreground: 0 0% 98%;
+
+            --secondary: 240 3.7% 45%;                /* Zinc-600 #71717A */
+            --secondary-foreground: 0 0% 98%;
+
+            --muted: 240 3.7% 15%;                    /* Zinc-800 #27272A */
+            --muted-foreground: 240 5% 65%;           /* Zinc-400 #A1A1AA */
+
+            --accent: 262 83% 75%;                    /* Violet accent */
+            --accent-foreground: 0 0% 98%;
+
+            --destructive: 0 72% 51%;                 /* Red #EF4444 */
+            --destructive-foreground: 0 0% 98%;
+
+            --border: 0 0% 100% / 0.1;                /* Glass border */
+            --input: 240 3.7% 15% / 0.6;              /* Glass input bg */
+            --ring: 262 83% 75%;
+
+            --radius: 0.75rem;
+
+            /* WinMix Brand Colors */
+            --winmix-violet: 262 83% 75%;             /* #A855F7 - Primary violet */
+            --winmix-violet-dark: 262 83% 58%;        /* #8B5CF6 - Darker violet */
+            --winmix-purple: 258 90% 66%;             /* #7C3AED - Purple accent */
+            
+            /* Neutral Palette */
+            --zinc-100: 240 4.8% 95.9%;              /* #F4F4F5 */
+            --zinc-200: 240 5.9% 90%;                /* #E4E4E7 */
+            --zinc-300: 240 4.9% 83.9%;              /* #D4D4D8 */
+            --zinc-400: 240 5% 64.9%;                /* #A1A1AA */
+            --zinc-500: 240 3.8% 46.1%;              /* #71717A */
+            --zinc-700: 240 5.2% 33.9%;              /* #3F3F46 */
+            --zinc-800: 240 3.7% 15.9%;              /* #27272A */
+            --zinc-900: 240 5.9% 10%;                /* #18181B */
+
+            /* Semantic Colors */
+            --success: 142 76% 36%;                   /* #10B981 */
+            --warning: 38 92% 50%;                    /* #F59E0B */
+            --error: 0 72% 51%;                       /* #EF4444 */
+            --info: 221 83% 53%;                      /* #3B82F6 */
+
+            /* Chart Colors (WinMix Data Viz Palette) */
+            --chart-1: 221 83% 53%;                   /* Blue #3B82F6 */
+            --chart-2: 142 76% 36%;                   /* Green #10B981 */
+            --chart-3: 38 92% 50%;                    /* Yellow #F59E0B */
+            --chart-4: 262 83% 75%;                   /* Purple #A855F7 */
+            --chart-5: 25 95% 53%;                    /* Orange #FF6B35 */
+
+            /* Sports Team Colors */
+            --sports-emerald: 158 64% 52%;            /* #10B981 */
+            --sports-cyan: 198 93% 60%;               /* #06B6D4 */
+            --sports-amber: 43 96% 56%;               /* #F59E0B */
+            --sports-pink: 316 73% 52%;               /* #EC4899 */
+
+            /* Glassmorphism Effects */
+            --glass-bg: 0 0% 0% / 0.2;                /* 20% black glass */
+            --glass-bg-light: 0 0% 100% / 0.05;       /* 5% white glass */
+            --glass-border: 0 0% 100% / 0.1;          /* 10% white border */
+            --glass-hover: 0 0% 0% / 0.3;             /* 30% black hover */
+
+            /* Advanced Gradients */
+            --gradient-violet: linear-gradient(135deg, hsl(262 83% 75%), hsl(258 90% 66%));
+            --gradient-bg: linear-gradient(180deg, hsl(262 83% 75% / 0.1) 0%, hsl(0 0% 0%) 50%);
+            --gradient-text: linear-gradient(135deg, hsl(0 0% 98%), hsl(240 5% 65%));
+
+            /* Enhanced Shadows */
+            --shadow-glow-violet: 0 0 40px hsl(262 83% 75% / 0.25);
+            --shadow-glow-strong: 0 0 60px hsl(262 83% 75% / 0.4);
+            --shadow-card: 0 25px 50px -12px hsl(0 0% 0% / 0.8);
+            --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+        }
+
+        body {
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* WinMix Glassmorphism System */
+        .glass-card {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-glass);
+        }
+
+        .glass-hover:hover {
+            background: hsl(var(--glass-hover));
+            border-color: hsl(var(--border));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input {
+            background: hsl(var(--input));
+            border: 1px solid hsl(var(--border)) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .glass-input:focus {
+            border-color: hsl(var(--ring)) !important;
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+        }
+
+        /* WinMix Typography Scale */
+        .winmix-hero {
+            font-size: 2.25rem;
+            font-weight: bold;
+            letter-spacing: -0.025em;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .winmix-section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: hsl(var(--foreground));
+        }
+
+        .winmix-card-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        /* Enhanced Hover Effects */
+        .winmix-hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .winmix-hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow-violet);
+        }
+
+        .winmix-hover-glow:hover {
+            box-shadow: var(--shadow-glow-strong);
+            border-color: hsl(var(--primary) / 0.5);
+        }
+
+        .winmix-hover-scale {
+            transition: transform 0.2s ease;
+        }
+
+        .winmix-hover-scale:hover {
+            transform: scale(1.02);
+        }
+
+        /* Button Variants */
+        .winmix-btn-primary {
+            background: var(--gradient-violet);
+            border: 1px solid hsl(var(--primary) / 0.3);
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+            transition: all 0.2s ease;
+            color: hsl(var(--primary-foreground));
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .winmix-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px hsl(var(--primary) / 0.4);
+        }
+
+        .winmix-btn-glass {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .winmix-btn-glass:hover {
+            background: hsl(var(--glass-hover));
+            border-color: hsl(var(--primary) / 0.3);
+            box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        /* Animation Utilities */
+        .winmix-fade-in {
+            animation: fade-in 0.6s ease-out;
+        }
+
+        .winmix-slide-up {
+            animation: slide-up 0.6s ease-out;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Focus Styles for Accessibility */
+        .winmix-focus:focus-visible {
+            outline: 2px solid hsl(var(--primary));
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Statistics Card Specific Styles */
+        .winmix-stat-card {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-glass);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .winmix-stat-card:hover {
+            background: hsl(var(--glass-hover));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow-violet);
+            border-color: hsl(var(--primary) / 0.3);
+        }
+
+        /* Progress Bar System */
+        .winmix-progress {
+            background: hsl(var(--muted));
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+            height: 0.5rem;
+            width: 100%;
+        }
+
+        .winmix-progress-fill {
+            height: 100%;
+            background: var(--gradient-violet);
+            transition: width 0.5s ease-out;
+            border-radius: inherit;
+        }
+
+        /* Table Styles */
+        .winmix-table {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .winmix-table th {
+            background: hsl(var(--muted) / 0.5);
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .winmix-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .winmix-table tbody tr:hover {
+            background: hsl(var(--glass-hover));
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            height: 400px;
+            position: relative;
+        }
+
+        /* Navigation Styles */
+        .winmix-nav {
+            background: hsl(var(--background) / 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .winmix-nav-item {
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1rem;
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+        }
+
+        .winmix-nav-item:hover {
+            color: hsl(var(--foreground));
+            border-bottom-color: hsl(var(--primary) / 0.3);
+        }
+
+        .winmix-nav-item.active {
+            color: hsl(var(--primary));
+            border-bottom-color: hsl(var(--primary));
+        }
+
+        /* Form styles */
+        .form-input, .form-select {
+            background: hsl(var(--input));
+            border: 1px solid hsl(var(--border));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            color: hsl(var(--foreground));
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: hsl(var(--ring));
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+            outline: none;
+        }
+
+        /* Badge styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            padding: 0.125rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .badge-success {
+            background: hsl(var(--success) / 0.15);
+            color: hsl(var(--success));
+            border-color: hsl(var(--success) / 0.2);
+        }
+
+        .badge-error {
+            background: hsl(var(--error) / 0.15);
+            color: hsl(var(--error));
+            border-color: hsl(var(--error) / 0.2);
+        }
+
+        .badge-primary {
+            background: hsl(var(--primary) / 0.15);
+            color: hsl(var(--primary));
+            border-color: hsl(var(--primary) / 0.2);
+        }
+
+        .badge-secondary {
+            background: hsl(var(--muted));
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Filter Dropdown Styles */
+        .filter-dropdown {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.5rem;
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .filter-dropdown:hover {
+            background: hsl(var(--glass-hover));
+            border-color: hsl(var(--primary) / 0.3);
+            box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        .filter-dropdown.active {
+            border-color: hsl(var(--ring));
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.25rem;
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            max-height: 14rem;
+            overflow-y: auto;
+            z-index: 50;
+            box-shadow: var(--shadow-glass);
+        }
+
+        .dropdown-item {
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            color: hsl(var(--foreground) / 0.9);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .dropdown-item:hover {
+            background: hsl(var(--muted) / 0.3);
+            color: hsl(var(--foreground));
+        }
+
+        /* Responsive utilities */
+        @media (max-width: 768px) {
+            .winmix-hero {
+                font-size: 1.875rem;
+            }
+            
+            .winmix-section-title {
+                font-size: 1.25rem;
+            }
+            
+            .responsive-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .chart-container {
+                height: 300px;
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .responsive-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .responsive-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        /* Loading states */
+        .loading-spinner {
+            border: 3px solid hsl(var(--muted));
+            border-top: 3px solid hsl(var(--primary));
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Prediction card styles */
+        .prediction-card {
+            background: hsl(var(--glass-bg));
+            border: 1px solid hsl(var(--glass-border));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .prediction-card:hover {
+            background: hsl(var(--glass-hover));
+            border-color: hsl(var(--primary) / 0.3);
+            box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        /* Utility classes */
+        .hidden { display: none; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .block { display: block; }
+        .inline-flex { display: inline-flex; }
+        
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .flex-col { flex-direction: column; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        
+        .m-4 { margin: 1rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .min-h-screen { min-height: 100vh; }
+        .max-w-7xl { max-width: 80rem; }
+        .max-w-3xl { max-width: 48rem; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .text-xs { font-size: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-full { border-radius: 9999px; }
+        
+        .border { border-width: 1px; }
+        .border-t { border-top-width: 1px; }
+        
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .fixed { position: fixed; }
+        .sticky { position: sticky; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .top-0 { top: 0; }
+        .z-10 { z-index: 10; }
+        .z-40 { z-index: 40; }
+        
+        .space-y-2 > * + * { margin-top: 0.5rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        .space-y-8 > * + * { margin-top: 2rem; }
+        .space-y-12 > * + * { margin-top: 3rem; }
+        
+        .overflow-hidden { overflow: hidden; }
+        .overflow-x-auto { overflow-x: auto; }
+        .cursor-pointer { cursor: pointer; }
+        
+        .hover\:opacity-80:hover { opacity: 0.8; }
+        .transition-all { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Scrollbar styles */
+        .scrollbar-modern {
+            scrollbar-width: thin;
+            scrollbar-color: hsl(var(--primary) / 0.4) transparent;
+        }
+
+        .scrollbar-modern::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-modern::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+        }
+
+        .scrollbar-modern::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.4));
+            border-radius: 10px;
+        }
+
+        .scrollbar-modern::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.6));
+        }
+
+        /* Team colors */
+        .team-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .bg-sports-emerald { background-color: hsl(var(--sports-emerald)); }
+        .bg-sports-cyan { background-color: hsl(var(--sports-cyan)); }
+        .bg-sports-amber { background-color: hsl(var(--sports-amber)); }
+        .bg-sports-pink { background-color: hsl(var(--sports-pink)); }
+
+        /* Number counter animation */
+        .number-counter {
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        /* Special chart styles */
+        .chart-wrapper {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Tab styles */
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .tab-button.active {
+            background: hsl(var(--primary) / 0.2);
+            color: hsl(var(--primary));
+        }
+
+        .tab-button:hover {
+            background: hsl(var(--muted) / 0.3);
+            color: hsl(var(--foreground));
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="min-h-screen w-full relative">
+        <!-- Background Effect -->
+        <div class="absolute inset-0 z-0" style="background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139, 92, 246, 0.25), transparent 70%), #000000;"></div>
+
+        <!-- Navigation -->
+        <header class="sticky top-0 z-40 winmix-nav">
+            <div class="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--gradient-violet);">
+                        <span class="text-white font-bold">W</span>
+                    </div>
+                    <span class="text-xl font-bold">WinMix</span>
+                </div>
+                
+                <nav class="flex items-center gap-6">
+                    <a href="#" class="winmix-nav-item active">Főoldal</a>
+                    <a href="#" class="winmix-nav-item">Statisztikák</a>
+                    <a href="#" class="winmix-nav-item">Elemzések</a>
+                    <a href="#" class="winmix-nav-item">Predikciók</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="mx-auto max-w-7xl px-4 py-12 space-y-12 relative z-10">
+            <!-- Hero Section -->
+            <section class="text-center space-y-4 winmix-fade-in">
+                <h1 class="winmix-hero">Mérkőzés szűrő és statisztikák</h1>
+                <p class="text-lg max-w-3xl mx-auto" style="color: hsl(var(--muted-foreground));">
+                    Szűrd a meccseket csapatokra és eseményekre, elemezd a kimeneteleket, és exportáld CSV-be a professzionális WinMix platformon.
+                </p>
+                
+                <!-- Quick Action Buttons -->
+                <div class="flex items-center justify-center gap-4 pt-4 flex-wrap">
+                    <button onclick="resetFilters()" class="winmix-btn-glass winmix-hover-lift winmix-focus">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        Visszaállítás
+                    </button>
+                    <button onclick="applyFilters()" class="winmix-btn-primary winmix-hover-lift winmix-focus">
+                        <i data-lucide="filter" class="w-4 h-4"></i>
+                        Szűrés
+                    </button>
+                    <button onclick="exportCSV()" class="winmix-btn-glass winmix-hover-lift winmix-focus">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        CSV export
+                    </button>
+                    <button onclick="openPredictionModal()" class="winmix-btn-primary winmix-hover-lift winmix-focus">
+                        <i data-lucide="brain" class="w-4 h-4"></i>
+                        Predikció készítése
+                    </button>
+                </div>
+            </section>
+
+            <!-- Filter Section -->
+            <section class="winmix-slide-up" role="region" aria-label="Mérkőzés szűrők">
+                <div class="rounded-2xl glass-card">
+                    <div class="p-4 sm:p-6">
+                        <!-- Search and Quick Actions -->
+                        <div class="mb-4 flex flex-col sm:flex-row gap-3">
+                            <div class="relative flex-1">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style="color: hsl(var(--foreground) / 0.6);"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Csapat neve szerinti keresés..."
+                                    id="teamSearch"
+                                    class="pl-10 form-input"
+                                    style="background: hsl(var(--muted) / 0.3); border-color: hsl(var(--border)); color: hsl(var(--foreground));"
+                                    aria-label="Csapat keresése"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <!-- Hazai csapat filter -->
+                            <div class="relative">
+                                <button class="filter-dropdown" onclick="toggleDropdown('homeTeam')">
+                                    <div class="flex items-center gap-2">
+                                        <span class="team-dot bg-sports-emerald"></span>
+                                        <div class="flex flex-col text-left">
+                                            <span class="text-xs uppercase tracking-wider" style="color: hsl(var(--foreground) / 0.5);">Hazai csapat</span>
+                                            <span class="text-sm" style="color: hsl(var(--foreground) / 0.9);" id="homeTeamValue">Válassz hazai csapatot</span>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-4 h-4" style="color: hsl(var(--foreground) / 0.5);"></i>
+                                </button>
+                                <div id="homeTeamDropdown" class="dropdown-menu hidden scrollbar-modern">
+                                    <!-- Dynamic content will be inserted here -->
+                                </div>
+                            </div>
+
+                            <!-- Vendég csapat filter -->
+                            <div class="relative">
+                                <button class="filter-dropdown" onclick="toggleDropdown('awayTeam')">
+                                    <div class="flex items-center gap-2">
+                                        <span class="team-dot bg-sports-cyan"></span>
+                                        <div class="flex flex-col text-left">
+                                            <span class="text-xs uppercase tracking-wider" style="color: hsl(var(--foreground) / 0.5);">Vendég csapat</span>
+                                            <span class="text-sm" style="color: hsl(var(--foreground) / 0.9);" id="awayTeamValue">Válassz vendég csapatot</span>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-4 h-4" style="color: hsl(var(--foreground) / 0.5);"></i>
+                                </button>
+                                <div id="awayTeamDropdown" class="dropdown-menu hidden scrollbar-modern">
+                                    <!-- Dynamic content will be inserted here -->
+                                </div>
+                            </div>
+
+                            <!-- BTTS filter -->
+                            <div class="relative">
+                                <button class="filter-dropdown" onclick="toggleDropdown('btts')">
+                                    <div class="flex items-center gap-2">
+                                        <span class="team-dot" style="background-color: hsl(var(--primary));"></span>
+                                        <div class="flex flex-col text-left">
+                                            <span class="text-xs uppercase tracking-wider" style="color: hsl(var(--foreground) / 0.5);">Mindkét csapat gólt szerzett</span>
+                                            <span class="text-sm" style="color: hsl(var(--foreground) / 0.9);" id="bttsValue">Válassz: Igen / Nem</span>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-4 h-4" style="color: hsl(var(--foreground) / 0.5);"></i>
+                                </button>
+                                <div id="bttsDropdown" class="dropdown-menu hidden">
+                                    <button class="dropdown-item" onclick="selectFilter('btts', 'Igen')">Igen</button>
+                                    <button class="dropdown-item" onclick="selectFilter('btts', 'Nem')">Nem</button>
+                                </div>
+                            </div>
+
+                            <!-- Fordítás filter -->
+                            <div class="relative">
+                                <button class="filter-dropdown" onclick="toggleDropdown('comeback')">
+                                    <div class="flex items-center gap-2">
+                                        <span class="team-dot bg-sports-amber"></span>
+                                        <div class="flex flex-col text-left">
+                                            <span class="text-xs uppercase tracking-wider" style="color: hsl(var(--foreground) / 0.5);">Fordítás történet</span>
+                                            <span class="text-sm" style="color: hsl(var(--foreground) / 0.9);" id="comebackValue">Válassz: Igen / Nem</span>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-4 h-4" style="color: hsl(var(--foreground) / 0.5);"></i>
+                                </button>
+                                <div id="comebackDropdown" class="dropdown-menu hidden">
+                                    <button class="dropdown-item" onclick="selectFilter('comeback', 'Igen')">Igen</button>
+                                    <button class="dropdown-item" onclick="selectFilter('comeback', 'Nem')">Nem</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Filters Display -->
+                        <div id="activeFilters" class="mt-4 p-3 rounded-lg border hidden" style="background: hsl(var(--muted) / 0.3); border-color: hsl(var(--border));">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm" style="color: hsl(var(--foreground) / 0.7);">Aktív szűrők:</span>
+                                <button
+                                    onclick="clearAllFilters()"
+                                    class="text-xs p-1 h-auto"
+                                    style="color: hsl(var(--foreground) / 0.6);"
+                                >
+                                    Összes törlése
+                                </button>
+                            </div>
+                            <div id="activeFiltersList" class="flex flex-wrap gap-2">
+                                <!-- Active filters will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Cards -->
+            <section class="winmix-slide-up">
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="winmix-section-title">Statisztikai áttekintő</h2>
+                        <span class="text-sm" style="color: hsl(var(--muted-foreground));" id="statsSubtitle">
+                            1,247 mérkőzés alapján
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                        <!-- Hazai győzelem -->
+                        <div class="winmix-stat-card">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="p-3 rounded-lg ring-1 transition-all duration-300" style="background: hsl(var(--success) / 0.2); border-color: hsl(var(--success) / 0.3);">
+                                    <i data-lucide="trending-up" class="w-5 h-5" style="color: hsl(var(--success));"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs mb-1" style="color: hsl(var(--muted-foreground));" id="homeWinPercentage">45.2%</div>
+                                    <div class="w-12 h-1 rounded-full overflow-hidden" style="background: hsl(var(--muted));">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out" style="background: hsl(var(--success)); width: 45.2%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="winmix-card-title transition-colors">Hazai győzelem</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold transition-colors number-counter" id="homeWins">564</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Döntetlen -->
+                        <div class="winmix-stat-card">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="p-3 rounded-lg ring-1 transition-all duration-300" style="background: hsl(var(--warning) / 0.2); border-color: hsl(var(--warning) / 0.3);">
+                                    <i data-lucide="minus" class="w-5 h-5" style="color: hsl(var(--warning));"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs mb-1" style="color: hsl(var(--muted-foreground));" id="drawPercentage">28.3%</div>
+                                    <div class="w-12 h-1 rounded-full overflow-hidden" style="background: hsl(var(--muted));">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out" style="background: hsl(var(--warning)); width: 28.3%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="winmix-card-title transition-colors">Döntetlen</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold transition-colors number-counter" id="draws">353</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vendég győzelem -->
+                        <div class="winmix-stat-card">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="p-3 rounded-lg ring-1 transition-all duration-300" style="background: hsl(var(--info) / 0.2); border-color: hsl(var(--info) / 0.3);">
+                                    <i data-lucide="trending-down" class="w-5 h-5" style="color: hsl(var(--info));"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs mb-1" style="color: hsl(var(--muted-foreground));" id="awayWinPercentage">26.5%</div>
+                                    <div class="w-12 h-1 rounded-full overflow-hidden" style="background: hsl(var(--muted));">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out" style="background: hsl(var(--info)); width: 26.5%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="winmix-card-title transition-colors">Vendég győzelem</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold transition-colors number-counter" id="awayWins">330</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Összesen meccs -->
+                        <div class="winmix-stat-card">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="p-3 rounded-lg ring-1 transition-all duration-300" style="background: hsl(var(--primary) / 0.2); border-color: hsl(var(--primary) / 0.3);">
+                                    <i data-lucide="trophy" class="w-5 h-5" style="color: hsl(var(--primary));"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs mb-1" style="color: hsl(var(--muted-foreground));">100%</div>
+                                    <div class="w-12 h-1 rounded-full overflow-hidden" style="background: hsl(var(--muted));">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out" style="background: hsl(var(--primary)); width: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="winmix-card-title transition-colors">Összesen meccs</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold transition-colors number-counter" id="totalMatches">1,247</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BTTS arány -->
+                        <div class="winmix-stat-card">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="p-3 rounded-lg ring-1 transition-all duration-300" style="background: hsl(var(--chart-2) / 0.2); border-color: hsl(var(--chart-2) / 0.3);">
+                                    <i data-lucide="target" class="w-5 h-5" style="color: hsl(var(--chart-2));"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs mb-1" style="color: hsl(var(--muted-foreground));" id="bttsDisplayPercentage">68.3%</div>
+                                    <div class="w-12 h-1 rounded-full overflow-hidden" style="background: hsl(var(--muted));">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out" style="background: hsl(var(--chart-2)); width: 68.3%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="winmix-card-title transition-colors">BTTS arány</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold transition-colors number-counter" id="bttsCount">68.3</span>
+                                    <span class="text-xl">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Átlag gólok -->
+                        <div class="winmix-stat-card">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="p-3 rounded-lg ring-1 transition-all duration-300" style="background: hsl(var(--chart-5) / 0.2); border-color: hsl(var(--chart-5) / 0.3);">
+                                    <i data-lucide="bar-chart-3" class="w-5 h-5" style="color: hsl(var(--chart-5));"></i>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs mb-1" style="color: hsl(var(--muted-foreground));" id="avgGoalsPercentage">53.4%</div>
+                                    <div class="w-12 h-1 rounded-full overflow-hidden" style="background: hsl(var(--muted));">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out" style="background: hsl(var(--chart-5)); width: 53.4%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="winmix-card-title transition-colors">Átlag gólok</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold transition-colors number-counter" id="avgGoals">2.67</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Probability Section -->
+            <section class="mb-8">
+                <div class="rounded-2xl glass-card p-5 sm:p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full grid place-items-center ring-1" style="background: hsl(var(--primary) / 0.2); border-color: hsl(var(--primary) / 0.3);">
+                                <i data-lucide="circle-dot" class="w-6 h-6" style="color: hsl(var(--primary));"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl md:text-2xl font-semibold tracking-tight">Mindkét csapat gólt szerzett</h3>
+                                <p class="text-sm" style="color: hsl(var(--foreground) / 0.6);">
+                                    A szűrt mérkőzések alapján • Minta méret: <span style="color: hsl(var(--foreground) / 0.8);" id="sampleSize">1,247</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-end gap-6">
+                            <div class="text-right">
+                                <p class="text-3xl font-semibold tracking-tight" style="color: hsl(var(--foreground));" id="probabilityPercentage">68.3%</p>
+                                <p class="text-xs" style="color: hsl(var(--foreground) / 0.6);" id="probabilityCount">
+                                    852 / 1,247 mérkőzés
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="h-3 rounded-full overflow-hidden" style="background: hsl(var(--foreground) / 0.1);">
+                            <div class="h-3 transition-all duration-300 rounded-full" 
+                                 style="background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--winmix-purple))); width: 68.3%;"
+                                 id="probabilityBar">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center gap-4">
+                            <span class="text-xs" style="color: hsl(var(--foreground) / 0.5);">0%</span>
+                            <div class="flex-1 h-2 rounded-full relative" style="background: hsl(var(--foreground) / 0.1);">
+                                <div class="h-2 rounded-full transition-all duration-300"
+                                     style="background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--winmix-purple))); width: 68.3%;"
+                                     id="probabilityBar2">
+                                </div>
+                            </div>
+                            <span class="text-xs" style="color: hsl(var(--foreground) / 0.5);">100%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="mb-8">
+                <div class="glass-card border rounded-xl" style="border-color: hsl(var(--border));">
+                    <div class="p-6 border-b" style="border-color: hsl(var(--border));">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg grid place-items-center ring-1" style="background: hsl(var(--primary) / 0.2); border-color: hsl(var(--primary) / 0.3);">
+                                    <i data-lucide="bar-chart-3" class="w-5 h-5" style="color: hsl(var(--primary));"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Haladó Analitika</h3>
+                                    <p class="text-sm mt-1" style="color: hsl(var(--foreground) / 0.6);">
+                                        Összes meccs alapján számítva
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <button class="p-2 rounded hover:bg-white/5 transition-colors" style="color: hsl(var(--foreground) / 0.7);" onclick="refreshCharts()">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                </button>
+                                <button class="p-2 rounded hover:bg-white/5 transition-colors" style="color: hsl(var(--foreground) / 0.7);" onclick="exportChart()">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                            <!-- Controls -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm block mb-2" style="color: hsl(var(--foreground) / 0.7);">Analitika típus</label>
+                                    <div class="space-y-1 p-1 rounded-lg" style="background: hsl(var(--muted) / 0.3); border: 1px solid hsl(var(--border));">
+                                        <button class="tab-button active" data-chart="results" onclick="switchChart('results')">
+                                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                                            Leggyakoribb eredmények
+                                        </button>
+                                        <button class="tab-button" data-chart="goals" onclick="switchChart('goals')">
+                                            <i data-lucide="target" class="w-4 h-4"></i>
+                                            2.5+ gól trend
+                                        </button>
+                                        <button class="tab-button" data-chart="btts" onclick="switchChart('btts')">
+                                            <i data-lucide="line-chart" class="w-4 h-4"></i>
+                                            BTTS arány profi
+                                        </button>
+                                        <button class="tab-button" data-chart="weekly" onclick="switchChart('weekly')">
+                                            <i data-lucide="calendar" class="w-4 h-4"></i>
+                                            Heti elemzés
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Advanced Analytics Stats -->
+                                <div class="pt-4 space-y-3">
+                                    <div class="rounded-lg p-3 border" style="background: hsl(var(--muted) / 0.3); border-color: hsl(var(--border));">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm" style="color: hsl(var(--foreground) / 0.7);">Leggyakoribb</span>
+                                            <span class="font-semibold" style="color: hsl(var(--primary));">1-1</span>
+                                        </div>
+                                        <div class="text-xs mt-1" style="color: hsl(var(--foreground) / 0.5);">
+                                            12.4% gyakoriság
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rounded-lg p-3 border" style="background: hsl(var(--muted) / 0.3); border-color: hsl(var(--border));">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm" style="color: hsl(var(--foreground) / 0.7);">2.5+ gól</span>
+                                            <span class="font-semibold" style="color: hsl(var(--chart-2));">58.2%</span>
+                                        </div>
+                                        <div class="text-xs mt-1" style="color: hsl(var(--foreground) / 0.5);">
+                                            726 meccsből
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chart Area -->
+                            <div class="lg:col-span-3">
+                                <div class="chart-container">
+                                    <canvas id="mainChart" class="w-full h-full"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Table -->
+            <section class="mb-16" data-table-container>
+                <div class="rounded-2xl glass-card overflow-hidden">
+                    <div class="px-5 sm:px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-semibold tracking-tight">Listázott eredmények</h3>
+                            <span class="px-2 py-0.5 rounded-full text-xs" style="background: hsl(var(--foreground) / 0.1); color: hsl(var(--foreground) / 0.7);" id="matchCount">
+                                1,247 mérkőzés
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full text-xs border" style="background: hsl(var(--primary) / 0.2); color: hsl(var(--primary)); border-color: hsl(var(--primary) / 0.3);" id="pageInfo">
+                                1. oldal / 25
+                            </span>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-2 text-sm">
+                            <button class="winmix-btn-glass px-3 py-1 text-xs">Kiválasztás</button>
+                            <button class="winmix-btn-glass px-3 py-1 text-xs">Szűrők mentése</button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                            <thead>
+                                <tr class="text-left border-b" style="color: hsl(var(--foreground) / 0.6); border-color: hsl(var(--border));">
+                                    <th class="px-5 sm:px-6 py-3 font-medium">Hazai csapat</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">Vendég csapat</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">Félidő</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">Végeredmény</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">BTTS</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">Fordítás</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">Idő</th>
+                                    <th class="px-5 sm:px-6 py-3 font-medium">
+                                        <span class="sr-only">Műveletek</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody" style="border-top: 1px solid hsl(var(--border));">
+                                <!-- Dynamic content will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Enhanced Pagination -->
+                    <div class="px-5 sm:px-6 py-4 border-t" style="border-color: hsl(var(--border));">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="text-sm" style="color: hsl(var(--foreground) / 0.6);" id="paginationInfo">
+                                1–50 / 1,247 eredmény
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <!-- Previous button -->
+                                <button id="prevBtn" onclick="previousPage()" class="winmix-btn-glass px-3 py-1 text-xs">
+                                    <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+                                    Előző
+                                </button>
+                                
+                                <!-- Page numbers -->
+                                <div id="pageNumbers" class="flex items-center gap-1">
+                                    <!-- Dynamic page numbers will be inserted here -->
+                                </div>
+                                
+                                <!-- Next button -->
+                                <button id="nextBtn" onclick="nextPage()" class="winmix-btn-glass px-3 py-1 text-xs">
+                                    Következő
+                                    <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-24 border-t py-8" style="border-color: hsl(var(--border)); background: hsl(var(--background) / 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+            <div class="mx-auto max-w-7xl px-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--gradient-violet);">
+                            <span class="text-white font-bold">W</span>
+                        </div>
+                        <span class="text-sm" style="color: hsl(var(--muted-foreground));">
+                            © 2024 WinMix. Minden jog fenntartva.
+                        </span>
+                    </div>
+                    <span class="text-sm" style="color: hsl(var(--muted-foreground));">
+                        Magyar sports analytics platform
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Match Details Modal -->
+    <div id="matchModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="winmix-section-title" id="modalTitle">Mérkőzés részletek</h2>
+                <button onclick="closeMatchModal()" class="text-2xl" style="color: hsl(var(--muted-foreground));">×</button>
+            </div>
+            
+            <div id="modalContent" class="space-y-6">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Modal -->
+    <div id="predictionModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="winmix-section-title">Predikció készítése</h2>
+                <button onclick="closePredictionModal()" class="text-2xl" style="color: hsl(var(--muted-foreground));">×</button>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <h3 class="winmix-card-title mb-4">AI alapú predikciók 8 mérkőzésre</h3>
+                    <div class="text-sm mb-4" style="color: hsl(var(--muted-foreground));">
+                        A rendszer különböző algoritmusokat használ a legpontosabb előrejelzések érdekében.
+                    </div>
+                </div>
+                
+                <div id="predictionResults" class="space-y-4">
+                    <!-- Prediction results will be inserted here -->
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="generatePredictions()" class="winmix-btn-primary">
+                        <i data-lucide="brain" class="w-4 h-4"></i>
+                        Predikciók generálása
+                    </button>
+                    <button onclick="closePredictionModal()" class="winmix-btn-glass">
+                        Bezárás
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="modal-overlay hidden">
+        <div class="flex flex-col items-center gap-4">
+            <div class="loading-spinner"></div>
+            <p style="color: hsl(var(--foreground));">Betöltés...</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mock data és state management
+        const mockMatches = [
+            {
+                homeTeam: "Real Madrid",
+                awayTeam: "Barcelona", 
+                halfTime: "1-0",
+                fullTime: "2-1",
+                btts: true,
+                comeback: false,
+                date: "2024-03-15",
+                league: "La Liga",
+                venue: "Santiago Bernabéu",
+                attendance: 81044
+            },
+            {
+                homeTeam: "Liverpool",
+                awayTeam: "Manchester City",
+                halfTime: "0-2", 
+                fullTime: "3-2",
+                btts: true,
+                comeback: true,
+                date: "2024-03-14",
+                league: "Premier League",
+                venue: "Anfield",
+                attendance: 54074
+            },
+            {
+                homeTeam: "Bayern Munich",
+                awayTeam: "Borussia Dortmund",
+                halfTime: "1-1",
+                fullTime: "2-1", 
+                btts: true,
+                comeback: false,
+                date: "2024-03-13",
+                league: "Bundesliga",
+                venue: "Allianz Arena",
+                attendance: 75024
+            },
+            {
+                homeTeam: "Juventus",
+                awayTeam: "AC Milan",
+                halfTime: "0-0",
+                fullTime: "1-0",
+                btts: false,
+                comeback: false,
+                date: "2024-03-12",
+                league: "Serie A",
+                venue: "Allianz Stadium",
+                attendance: 41507
+            },
+            {
+                homeTeam: "PSG",
+                awayTeam: "Marseille",
+                halfTime: "2-0",
+                fullTime: "3-1",
+                btts: true,
+                comeback: false,
+                date: "2024-03-11",
+                league: "Ligue 1",
+                venue: "Parc des Princes",
+                attendance: 47929
+            },
+            {
+                homeTeam: "Arsenal",
+                awayTeam: "Chelsea",
+                halfTime: "1-1",
+                fullTime: "2-2",
+                btts: true,
+                comeback: false,
+                date: "2024-03-10",
+                league: "Premier League",
+                venue: "Emirates Stadium",
+                attendance: 60704
+            },
+            {
+                homeTeam: "Inter Milan",
+                awayTeam: "Napoli",
+                halfTime: "0-1",
+                fullTime: "1-1",
+                btts: true,
+                comeback: true,
+                date: "2024-03-09",
+                league: "Serie A",
+                venue: "Giuseppe Meazza",
+                attendance: 75817
+            },
+            {
+                homeTeam: "Atletico Madrid",
+                awayTeam: "Sevilla",
+                halfTime: "2-0",
+                fullTime: "2-0",
+                btts: false,
+                comeback: false,
+                date: "2024-03-08",
+                league: "La Liga",
+                venue: "Wanda Metropolitano",
+                attendance: 68456
+            }
+        ];
+
+        let currentPage = 1;
+        let rowsPerPage = 50;
+        let filteredMatches = [...mockMatches];
+        let currentFilters = {};
+        let allTeams = [...new Set([...mockMatches.map(m => m.homeTeam), ...mockMatches.map(m => m.awayTeam)])].sort();
+        let currentChart = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateTeamDropdowns();
+            loadMatches();
+            initializeCharts();
+            updateStatistics();
+            updatePageNumbers();
+        });
+
+        // Team dropdown population
+        function populateTeamDropdowns() {
+            const homeDropdown = document.getElementById('homeTeamDropdown');
+            const awayDropdown = document.getElementById('awayTeamDropdown');
+            
+            homeDropdown.innerHTML = allTeams.map(team => 
+                `<button class="dropdown-item" onclick="selectFilter('homeTeam', '${team}')">${team}</button>`
+            ).join('');
+            
+            awayDropdown.innerHTML = allTeams.map(team => 
+                `<button class="dropdown-item" onclick="selectFilter('awayTeam', '${team}')">${team}</button>`
+            ).join('');
+        }
+
+        // Filter functions
+        function toggleDropdown(type) {
+            const dropdown = document.getElementById(type + 'Dropdown');
+            const allDropdowns = document.querySelectorAll('.dropdown-menu');
+            
+            // Close all other dropdowns
+            allDropdowns.forEach(d => {
+                if (d !== dropdown) {
+                    d.classList.add('hidden');
+                    d.parentElement.querySelector('.filter-dropdown').classList.remove('active');
+                }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+            dropdown.parentElement.querySelector('.filter-dropdown').classList.toggle('active', !dropdown.classList.contains('hidden'));
+        }
+
+        function selectFilter(type, value) {
+            currentFilters[type] = value;
+            
+            // Update display
+            const valueElement = document.getElementById(type + 'Value');
+            valueElement.textContent = value;
+            
+            // Close dropdown
+            const dropdown = document.getElementById(type + 'Dropdown');
+            dropdown.classList.add('hidden');
+            dropdown.parentElement.querySelector('.filter-dropdown').classList.remove('active');
+            
+            updateActiveFilters();
+        }
+
+        function updateActiveFilters() {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            const activeFiltersList = document.getElementById('activeFiltersList');
+            
+            const hasFilters = Object.keys(currentFilters).some(key => currentFilters[key]);
+            
+            if (hasFilters) {
+                activeFiltersDiv.classList.remove('hidden');
+                activeFiltersList.innerHTML = Object.entries(currentFilters)
+                    .filter(([key, value]) => value)
+                    .map(([key, value]) => `
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs border" style="background: hsl(var(--primary) / 0.2); color: hsl(var(--primary)); border-color: hsl(var(--primary) / 0.3);">
+                            ${value}
+                            <button onclick="removeFilter('${key}')" class="hover:text-white transition-colors">×</button>
+                        </span>
+                    `).join('');
+            } else {
+                activeFiltersDiv.classList.add('hidden');
+            }
+        }
+
+        function removeFilter(key) {
+            delete currentFilters[key];
+            
+            // Reset display
+            const valueElement = document.getElementById(key + 'Value');
+            const placeholders = {
+                homeTeam: 'Válassz hazai csapatot',
+                awayTeam: 'Válassz vendég csapatot',
+                btts: 'Válassz: Igen / Nem',
+                comeback: 'Válassz: Igen / Nem'
+            };
+            valueElement.textContent = placeholders[key];
+            
+            updateActiveFilters();
+        }
+
+        function clearAllFilters() {
+            currentFilters = {};
+            
+            // Reset all displays
+            Object.keys(currentFilters).forEach(key => removeFilter(key));
+            
+            // Reset filter values
+            document.getElementById('homeTeamValue').textContent = 'Válassz hazai csapatot';
+            document.getElementById('awayTeamValue').textContent = 'Válassz vendég csapatot';
+            document.getElementById('bttsValue').textContent = 'Válassz: Igen / Nem';
+            document.getElementById('comebackValue').textContent = 'Válassz: Igen / Nem';
+            
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            showLoading();
+            
+            setTimeout(() => {
+                filteredMatches = mockMatches.filter(match => {
+                    return (!currentFilters.homeTeam || match.homeTeam === currentFilters.homeTeam) &&
+                           (!currentFilters.awayTeam || match.awayTeam === currentFilters.awayTeam) &&
+                           (!currentFilters.btts || match.btts.toString() === (currentFilters.btts === 'Igen').toString()) &&
+                           (!currentFilters.comeback || match.comeback.toString() === (currentFilters.comeback === 'Igen').toString());
+                });
+
+                currentPage = 1;
+                loadMatches();
+                updateStatistics();
+                updatePageNumbers();
+                hideLoading();
+                
+                showToast("Szűrők alkalmazva", "Eredmények frissítve");
+            }, 500);
+        }
+
+        function resetFilters() {
+            clearAllFilters();
+            showToast("Szűrők visszaállítva", "Összes szűrő törölve");
+        }
+
+        // Table functions
+        function loadMatches() {
+            const tbody = document.getElementById('resultsTableBody');
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const pageMatches = filteredMatches.slice(startIndex, endIndex);
+
+            tbody.innerHTML = '';
+            
+            const teamColors = ['bg-sports-emerald', 'bg-sports-cyan', 'bg-sports-amber', 'bg-sports-pink'];
+            
+            pageMatches.forEach((match, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-white/5 transition-colors group';
+                row.style.borderBottom = '1px solid hsl(var(--border))';
+                row.innerHTML = `
+                    <td class="px-5 sm:px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="team-dot ${teamColors[index % teamColors.length]}"></span>
+                            <span>${match.homeTeam}</span>
+                        </div>
+                    </td>
+                    <td class="px-5 sm:px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="team-dot ${teamColors[(index + 1) % teamColors.length]}"></span>
+                            <span>${match.awayTeam}</span>
+                        </div>
+                    </td>
+                    <td class="px-5 sm:px-6 py-4">${match.halfTime}</td>
+                    <td class="px-5 sm:px-6 py-4">${match.fullTime}</td>
+                    <td class="px-5 sm:px-6 py-4">
+                        <span class="badge ${match.btts ? 'badge-success' : 'badge-secondary'}">
+                            ${match.btts ? '✓ Igen' : 'Nem'}
+                        </span>
+                    </td>
+                    <td class="px-5 sm:px-6 py-4">
+                        <span class="badge ${match.comeback ? 'badge-primary' : 'badge-secondary'}">
+                            ${match.comeback ? 'Igen' : 'Nem'}
+                        </span>
+                    </td>
+                    <td class="px-5 sm:px-6 py-4" style="color: hsl(var(--muted-foreground));">
+                        ${new Date(match.date).toLocaleDateString('hu-HU')}
+                    </td>
+                    <td class="px-5 sm:px-6 py-4">
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="showMatchDetails(${index})" class="opacity-0 group-hover:opacity-100 transition-opacity winmix-btn-glass px-2 py-1 text-xs">
+                                <i data-lucide="eye" class="w-4 h-4 mr-1"></i>
+                                Részletek
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update counts
+            document.getElementById('matchCount').textContent = `${filteredMatches.length} mérkőzés`;
+            document.getElementById('paginationInfo').textContent = 
+                `${startIndex + 1}–${Math.min(endIndex, filteredMatches.length)} / ${filteredMatches.length} eredmény`;
+            
+            // Re-initialize Lucide icons for new content
+            lucide.createIcons();
+        }
+
+        function showMatchDetails(index) {
+            const match = filteredMatches.slice((currentPage - 1) * rowsPerPage)[index];
+            const modal = document.getElementById('matchModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            title.textContent = `${match.homeTeam} vs ${match.awayTeam}`;
+            
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <h4 class="winmix-card-title">Meccs információk</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Dátum:</span>
+                                <span>${new Date(match.date).toLocaleDateString('hu-HU')}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Helyszín:</span>
+                                <span>${match.venue || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Nézőszám:</span>
+                                <span>${(match.attendance || 0).toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Liga:</span>
+                                <span>${match.league}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h4 class="winmix-card-title">Eredmények</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Félidő:</span>
+                                <span class="font-semibold">${match.halfTime}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Végeredmény:</span>
+                                <span class="font-semibold">${match.fullTime}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">BTTS:</span>
+                                <span class="badge ${match.btts ? 'badge-success' : 'badge-secondary'}">${match.btts ? 'Igen' : 'Nem'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: hsl(var(--muted-foreground));">Fordítás:</span>
+                                <span class="badge ${match.comeback ? 'badge-primary' : 'badge-secondary'}">${match.comeback ? 'Igen' : 'Nem'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchModal').classList.add('hidden');
+        }
+
+        // Pagination functions
+        function updatePageNumbers() {
+            const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+            const pageNumbers = document.getElementById('pageNumbers');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            // Update page info
+            pageInfo.textContent = `${currentPage}. oldal / ${totalPages}`;
+            
+            // Update button states
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // Generate page numbers
+            pageNumbers.innerHTML = '';
+            const maxVisible = 5;
+            
+            let start = Math.max(1, currentPage - 2);
+            let end = Math.min(totalPages, start + maxVisible - 1);
+            
+            if (end - start < maxVisible - 1) {
+                start = Math.max(1, end - maxVisible + 1);
+            }
+            
+            for (let i = start; i <= end; i++) {
+                const btn = document.createElement('button');
+                btn.className = `w-8 h-8 p-0 text-xs rounded transition-colors ${
+                    i === currentPage 
+                        ? 'winmix-btn-primary' 
+                        : 'winmix-btn-glass'
+                }`;
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                pageNumbers.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                loadMatches();
+                updatePageNumbers();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadMatches();
+                updatePageNumbers();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadMatches();
+                updatePageNumbers();
+            }
+        }
+
+        // Statistics update
+        function updateStatistics() {
+            const bttsCount = filteredMatches.filter(m => m.btts).length;
+            const comebackCount = filteredMatches.filter(m => m.comeback).length;
+            const homeWins = filteredMatches.filter(m => {
+                const [home, away] = m.fullTime.split('-').map(Number);
+                return home > away;
+            }).length;
+            const draws = filteredMatches.filter(m => {
+                const [home, away] = m.fullTime.split('-').map(Number);
+                return home === away;
+            }).length;
+            const awayWins = filteredMatches.filter(m => {
+                const [home, away] = m.fullTime.split('-').map(Number);
+                return home < away;
+            }).length;
+            
+            const totalGoals = filteredMatches.reduce((sum, m) => {
+                const [home, away] = m.fullTime.split('-').map(Number);
+                return sum + home + away;
+            }, 0);
+            
+            const bttsPercentage = filteredMatches.length > 0 ? (bttsCount / filteredMatches.length * 100) : 0;
+            const homeWinPercentage = filteredMatches.length > 0 ? (homeWins / filteredMatches.length * 100) : 0;
+            const drawPercentage = filteredMatches.length > 0 ? (draws / filteredMatches.length * 100) : 0;
+            const awayWinPercentage = filteredMatches.length > 0 ? (awayWins / filteredMatches.length * 100) : 0;
+            const avgGoals = filteredMatches.length > 0 ? (totalGoals / filteredMatches.length) : 0;
+
+            // Update statistics displays
+            document.getElementById('totalMatches').textContent = filteredMatches.length.toLocaleString();
+            document.getElementById('homeWins').textContent = homeWins;
+            document.getElementById('draws').textContent = draws;
+            document.getElementById('awayWins').textContent = awayWins;
+            document.getElementById('bttsCount').textContent = bttsPercentage.toFixed(1);
+            document.getElementById('avgGoals').textContent = avgGoals.toFixed(1);
+            
+            document.getElementById('homeWinPercentage').textContent = homeWinPercentage.toFixed(1) + '%';
+            document.getElementById('drawPercentage').textContent = drawPercentage.toFixed(1) + '%';
+            document.getElementById('awayWinPercentage').textContent = awayWinPercentage.toFixed(1) + '%';
+            document.getElementById('bttsDisplayPercentage').textContent = bttsPercentage.toFixed(1) + '%';
+            document.getElementById('avgGoalsPercentage').textContent = Math.min((avgGoals / 5) * 100, 100).toFixed(1) + '%';
+            
+            document.getElementById('statsSubtitle').textContent = `${filteredMatches.length} mérkőzés alapján`;
+            
+            // Update probability section
+            document.getElementById('probabilityPercentage').textContent = bttsPercentage.toFixed(1) + '%';
+            document.getElementById('probabilityCount').textContent = `${bttsCount} / ${filteredMatches.length} mérkőzés`;
+            document.getElementById('sampleSize').textContent = filteredMatches.length;
+            
+            // Update progress bars
+            const progressBars = document.querySelectorAll('#probabilityBar, #probabilityBar2');
+            progressBars.forEach(bar => {
+                bar.style.width = bttsPercentage.toFixed(1) + '%';
+            });
+        }
+
+        // Charts initialization
+        function initializeCharts() {
+            switchChart('results');
+        }
+
+        function switchChart(chartType) {
+            // Update tab states
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.chart === chartType) {
+                    btn.classList.add('active');
+                }
+            });
+
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            // Destroy existing chart
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            switch (chartType) {
+                case 'results':
+                    currentChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['1-1', '2-1', '1-0', '2-0', '0-0', '0-1', '3-1', '1-2'],
+                            datasets: [{
+                                label: 'Gyakoriság (%)',
+                                data: [12.4, 9.8, 8.7, 7.3, 6.9, 6.2, 5.8, 5.4],
+                                backgroundColor: [
+                                    'hsl(262, 83%, 58%)',
+                                    'hsl(158, 64%, 52%)',
+                                    'hsl(43, 96%, 56%)',
+                                    'hsl(213, 94%, 68%)',
+                                    'hsl(316, 73%, 52%)',
+                                    'hsl(198, 93%, 60%)',
+                                    'hsl(24, 95%, 53%)',
+                                    'hsl(295, 72%, 61%)',
+                                ],
+                                borderRadius: 8,
+                                borderWidth: 0
+                            }]
+                        },
+                        options: getChartOptions()
+                    });
+                    break;
+                case 'goals':
+                    currentChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['2.5+ gól', '2.5 alatt'],
+                            datasets: [{
+                                data: [58.2, 41.8],
+                                backgroundColor: [
+                                    'hsl(158, 64%, 52%)',
+                                    'hsl(213, 94%, 68%)',
+                                ],
+                                borderWidth: 0,
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: getChartOptions()
+                    });
+                    break;
+                case 'btts':
+                    currentChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Már', 'Ápr', 'Máj', 'Jún'],
+                            datasets: [{
+                                label: 'BTTS arány (%)',
+                                data: [65, 68, 72, 67, 71, 68],
+                                borderColor: 'hsl(158, 64%, 52%)',
+                                backgroundColor: 'hsla(158, 64%, 52%, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 6,
+                                pointHoverRadius: 8
+                            }]
+                        },
+                        options: getChartOptions()
+                    });
+                    break;
+                case 'weekly':
+                    currentChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'],
+                            datasets: [{
+                                label: 'Mérkőzések száma',
+                                data: [45, 32, 78, 156, 189, 234, 198],
+                                backgroundColor: 'hsla(262, 83%, 58%, 0.8)',
+                                borderRadius: 8,
+                                borderWidth: 0
+                            }]
+                        },
+                        options: getChartOptions()
+                    });
+                    break;
+            }
+        }
+
+        function getChartOptions() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: 'rgba(255,255,255,0.8)',
+                            usePointStyle: true,
+                            padding: 20,
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(17,17,22,0.95)',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        cornerRadius: 8,
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { 
+                            color: 'rgba(255,255,255,0.6)',
+                            maxTicksLimit: 8 
+                        },
+                        grid: { 
+                            color: 'rgba(255,255,255,0.08)',
+                            drawBorder: false
+                        }
+                    },
+                    y: {
+                        ticks: { 
+                            color: 'rgba(255,255,255,0.6)',
+                            maxTicksLimit: 6 
+                        },
+                        grid: { 
+                            color: 'rgba(255,255,255,0.08)',
+                            drawBorder: false
+                        }
+                    }
+                }
+            };
+        }
+
+        function refreshCharts() {
+            initializeCharts();
+            showToast("Grafikonok frissítve", "Legfrissebb adatok betöltve");
+        }
+
+        function exportChart() {
+            showToast("Grafikon exportálás", "PNG formátumban letöltés indítása...");
+        }
+
+        // Export function
+        function exportCSV() {
+            showLoading();
+            
+            setTimeout(() => {
+                const csvContent = [
+                    ['Hazai csapat', 'Vendég csapat', 'Félidő', 'Végeredmény', 'BTTS', 'Fordítás', 'Dátum'].join(','),
+                    ...filteredMatches.map(match => [
+                        match.homeTeam,
+                        match.awayTeam,
+                        match.halfTime,
+                        match.fullTime,
+                        match.btts ? 'Igen' : 'Nem',
+                        match.comeback ? 'Igen' : 'Nem',
+                        match.date
+                    ].join(','))
+                ].join('\n');
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'merkozesek.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                hideLoading();
+                showToast("CSV export kész", `${filteredMatches.length} mérkőzés exportálva`);
+            }, 1000);
+        }
+
+        // Prediction Modal
+        function openPredictionModal() {
+            document.getElementById('predictionModal').classList.remove('hidden');
+        }
+
+        function closePredictionModal() {
+            document.getElementById('predictionModal').classList.add('hidden');
+        }
+
+        function generatePredictions() {
+            const resultsDiv = document.getElementById('predictionResults');
+            resultsDiv.innerHTML = '<div class="loading-spinner mx-auto"></div>';
+            
+            setTimeout(() => {
+                const predictions = [
+                    { match: "Arsenal vs Chelsea", prediction: "BTTS: Igen", confidence: "85%", algorithm: "Neural Network" },
+                    { match: "Liverpool vs Manchester United", prediction: "Hazai győzelem", confidence: "72%", algorithm: "Random Forest" },
+                    { match: "Real Madrid vs Atletico Madrid", prediction: "Under 2.5", confidence: "68%", algorithm: "SVM" },
+                    { match: "Barcelona vs Valencia", prediction: "BTTS: Igen", confidence: "79%", algorithm: "Deep Learning" },
+                    { match: "Bayern vs Leipzig", prediction: "Over 3.5", confidence: "74%", algorithm: "Ensemble" },
+                    { match: "Juventus vs Roma", prediction: "X", confidence: "61%", algorithm: "Gradient Boosting" },
+                    { match: "PSG vs Lyon", prediction: "Hazai győzelem", confidence: "88%", algorithm: "XGBoost" },
+                    { match: "Napoli vs Inter", prediction: "BTTS: Nem", confidence: "66%", algorithm: "Logistic Regression" }
+                ];
+
+                resultsDiv.innerHTML = predictions.map(pred => `
+                    <div class="prediction-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">${pred.match}</h4>
+                                <p class="text-sm" style="color: hsl(var(--muted-foreground));">${pred.prediction}</p>
+                                <p class="text-xs mt-1" style="color: hsl(var(--muted-foreground));">Algoritmus: ${pred.algorithm}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold" style="color: hsl(var(--primary));">${pred.confidence}</div>
+                                <div class="text-xs" style="color: hsl(var(--muted-foreground));">bizalom</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }, 2000);
+        }
+
+        // Utility functions
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function showToast(title, description) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: hsl(var(--glass-bg));
+                border: 1px solid hsl(var(--glass-border));
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 0.75rem;
+                padding: 1rem;
+                z-index: 1000;
+                color: hsl(var(--foreground));
+                box-shadow: var(--shadow-glass);
+                min-width: 300px;
+            `;
+            
+            toast.innerHTML = `
+                <div class="font-medium">${title}</div>
+                <div class="text-sm mt-1" style="color: hsl(var(--muted-foreground));">${description}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    dropdown.classList.add('hidden');
+                    dropdown.parentElement.querySelector('.filter-dropdown').classList.remove('active');
+                });
+            }
+        });
+
+        // Team search functionality
+        document.getElementById('teamSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredTeams = allTeams.filter(team => 
+                team.toLowerCase().includes(searchTerm)
+            );
+            
+            const homeDropdown = document.getElementById('homeTeamDropdown');
+            const awayDropdown = document.getElementById('awayTeamDropdown');
+            
+            homeDropdown.innerHTML = filteredTeams.map(team => 
+                `<button class="dropdown-item" onclick="selectFilter('homeTeam', '${team}')">${team}</button>`
+            ).join('');
+            
+            awayDropdown.innerHTML = filteredTeams.map(team => 
+                `<button class="dropdown-item" onclick="selectFilter('awayTeam', '${team}')">${team}</button>`
+            ).join('');
+        });
+    </script>
+</body>
+</html>
