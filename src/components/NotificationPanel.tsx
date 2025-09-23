@@ -1,30 +1,109 @@
-import { X, Brain, Play } from "lucide-react";
+import { X, Brain, Play, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useState, useEffect } from "react";
+import { useMatches } from "@/hooks/use-matches";
 
 interface PredictionBuilderPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface Match {
+interface PredictionMatch {
   id: string;
   homeTeam: string;
   awayTeam: string;
   selected: boolean;
 }
 
+const TeamDropdown = ({ 
+  label, 
+  value, 
+  placeholder, 
+  options, 
+  onSelect 
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  options: string[];
+  onSelect: (value: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="flex-1">
+      <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">
+        {label}
+      </label>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <button
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg bg-muted/20 border border-border hover:border-primary/50 transition-colors ${
+              isOpen ? 'border-primary/50' : ''
+            }`}
+          >
+            <span className="text-sm text-foreground truncate">
+              {value || placeholder}
+            </span>
+            <ChevronDown className={`size-4 text-muted-foreground transition ${isOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </PopoverTrigger>
+        
+        <PopoverContent 
+          className="w-[var(--radix-popover-trigger-width)] p-2 bg-card/95 backdrop-blur-md border-border shadow-2xl z-[60]"
+          sideOffset={4}
+          align="start"
+        >
+          <div className="max-h-48 overflow-y-auto">
+            {options.map((option) => (
+              <button
+                key={option}
+                onClick={() => {
+                  onSelect(option);
+                  setIsOpen(false);
+                }}
+                className="w-full text-left px-3 py-2 rounded-md hover:bg-muted/50 text-sm transition text-foreground"
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
 const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps) => {
-  const [matches, setMatches] = useState<Match[]>([
-    { id: "1", homeTeam: "Real Madrid", awayTeam: "Barcelona", selected: true },
-    { id: "2", homeTeam: "Manchester United", awayTeam: "Liverpool", selected: true },
-    { id: "3", homeTeam: "Bayern Munich", awayTeam: "Borussia Dortmund", selected: true },
-    { id: "4", homeTeam: "Juventus", awayTeam: "Inter Milan", selected: true },
-    { id: "5", homeTeam: "Paris Saint-Germain", awayTeam: "Olympique Marseille", selected: true },
-    { id: "6", homeTeam: "Arsenal", awayTeam: "Chelsea", selected: true },
-    { id: "7", homeTeam: "Atletico Madrid", awayTeam: "Valencia", selected: true },
-    { id: "8", homeTeam: "AC Milan", awayTeam: "AS Roma", selected: true }
+  const [teams, setTeams] = useState<string[]>([]);
+  const { fetchTeams } = useMatches();
+  const [matches, setMatches] = useState<PredictionMatch[]>([
+    { id: "1", homeTeam: "", awayTeam: "", selected: true },
+    { id: "2", homeTeam: "", awayTeam: "", selected: true },
+    { id: "3", homeTeam: "", awayTeam: "", selected: true },
+    { id: "4", homeTeam: "", awayTeam: "", selected: true },
+    { id: "5", homeTeam: "", awayTeam: "", selected: true },
+    { id: "6", homeTeam: "", awayTeam: "", selected: true },
+    { id: "7", homeTeam: "", awayTeam: "", selected: true },
+    { id: "8", homeTeam: "", awayTeam: "", selected: true }
   ]);
+
+  useEffect(() => {
+    const loadTeams = async () => {
+      const teamList = await fetchTeams();
+      setTeams(teamList);
+    };
+    loadTeams();
+  }, []);
+
+  const updateMatch = (matchId: string, field: 'homeTeam' | 'awayTeam', value: string) => {
+    setMatches(matches.map(match => 
+      match.id === matchId 
+        ? { ...match, [field]: value }
+        : match
+    ));
+  };
 
   const toggleMatch = (matchId: string) => {
     setMatches(matches.map(match => 
@@ -34,9 +113,11 @@ const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps
     ));
   };
 
-  const selectedCount = matches.filter(match => match.selected).length;
+  const selectedCount = matches.filter(match => match.selected && match.homeTeam && match.awayTeam).length;
+  const validMatches = matches.filter(match => match.homeTeam && match.awayTeam);
 
   const handleGeneratePredictions = () => {
+    if (selectedCount === 0) return;
     // Generate predictions for selected matches
     onClose();
   };
@@ -74,45 +155,58 @@ const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps
         </div>
 
         {/* Match Selection */}
-        <div className="h-[calc(100vh-8rem)] px-5 pb-5 overflow-y-auto space-y-3">
-          <div className="mb-4 p-4 bg-muted/50 rounded-lg">
+        <div className="h-[calc(100vh-8rem)] px-5 pb-16 overflow-y-auto space-y-4">
+          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
             <p className="text-sm text-muted-foreground">
-              Válassz mérkőzéseket predikció készítéséhez ({selectedCount}/8 kiválasztva)
+              Állítsd be a mérkőzéseket predikció készítéséhez ({selectedCount}/{validMatches.length} érvényes kiválasztva)
             </p>
           </div>
           
-          {matches.map((match) => (
+          {matches.map((match, index) => (
             <div 
               key={match.id}
-              className={`group relative flex items-center p-4 rounded-lg border-2 transition-all cursor-pointer ${
-                match.selected 
-                  ? 'border-primary bg-primary/10' 
-                  : 'border-border hover:border-primary/50 hover:bg-muted/30'
-              }`}
-              onClick={() => toggleMatch(match.id)}
+              className="group relative p-4 rounded-lg border-2 border-border bg-card/50 transition-all"
             >
-              {/* Selection indicator */}
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${
-                match.selected 
-                  ? 'border-primary bg-primary' 
-                  : 'border-muted-foreground'
-              }`}>
-                {match.selected && (
-                  <div className="w-2 h-2 bg-white rounded-full" />
-                )}
+              {/* Match number and selection */}
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-muted-foreground">
+                  #{index + 1}. mérkőzés
+                </span>
+                <div 
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${
+                    match.selected 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground hover:border-primary'
+                  }`}
+                  onClick={() => toggleMatch(match.id)}
+                >
+                  {match.selected && (
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  )}
+                </div>
               </div>
               
-              {/* Match details */}
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-foreground">
-                    {match.homeTeam}
-                  </span>
-                  <span className="text-muted-foreground font-bold mx-3">VS</span>
-                  <span className="font-medium text-foreground">
-                    {match.awayTeam}
-                  </span>
+              {/* Team dropdowns */}
+              <div className="flex items-center gap-3">
+                <TeamDropdown
+                  label="HAZAI CSAPAT"
+                  value={match.homeTeam}
+                  placeholder="Válassz hazai csapatot"
+                  options={teams}
+                  onSelect={(value) => updateMatch(match.id, 'homeTeam', value)}
+                />
+                
+                <div className="flex items-center justify-center px-3 py-2 text-muted-foreground font-bold">
+                  VS
                 </div>
+                
+                <TeamDropdown
+                  label="VENDÉG CSAPAT"
+                  value={match.awayTeam}
+                  placeholder="Válassz vendég csapatot"
+                  options={teams}
+                  onSelect={(value) => updateMatch(match.id, 'awayTeam', value)}
+                />
               </div>
             </div>
           ))}
