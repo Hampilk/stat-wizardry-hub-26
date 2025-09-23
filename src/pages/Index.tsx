@@ -8,6 +8,7 @@ import EnhancedChartSection from "@/components/EnhancedChartSection";
 import ResultsTable from "@/components/ResultsTable";
 import DashboardCustomizer from "@/components/DashboardCustomizer";
 import PredictionModal from "@/components/PredictionModal";
+import NotificationPanel from "@/components/NotificationPanel";
 import { DashboardContainer, DashboardItem } from "@/components/DashboardContainer";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -20,6 +21,7 @@ const Index = () => {
   const [filters, setFilters] = useState<MatchFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [predictionModalOpen, setPredictionModalOpen] = useState(false);
+  const [notificationPanelOpen, setNotificationPanelOpen] = useState(false);
   const { matches, stats, totalCount, totalPages, loading, error, refetch } = useMatches(filters, currentPage, 50);
   const { visibleWidgets } = useDashboardLayout();
 
@@ -71,7 +73,7 @@ const Index = () => {
         description: `${totalCount} mérkőzés exportálva`,
       });
     } else if (action === "Predikció készítése") {
-      setPredictionModalOpen(true);
+      setNotificationPanelOpen(true);
     }
   };
 
@@ -216,6 +218,12 @@ const Index = () => {
         <PredictionModal 
           open={predictionModalOpen} 
           onOpenChange={setPredictionModalOpen} 
+        />
+
+        {/* Notification Panel */}
+        <NotificationPanel 
+          isOpen={notificationPanelOpen}
+          onClose={() => setNotificationPanelOpen(false)}
         />
       </main>
 
