@@ -1,119 +1,45 @@
-import { X } from "lucide-react";
+import { X, Brain, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
-interface NotificationPanelProps {
+interface PredictionBuilderPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface Notification {
+interface Match {
   id: string;
-  user: string;
-  action: string;
-  target: string;
-  timeAgo: string;
-  avatar: string;
+  homeTeam: string;
+  awayTeam: string;
+  selected: boolean;
 }
 
-const NotificationPanel = ({ isOpen, onClose }: NotificationPanelProps) => {
-  const notifications: Notification[] = [
-    {
-      id: "1",
-      user: "@prediction_expert",
-      action: "készített predikciót",
-      target: "Real Madrid vs Barcelona",
-      timeAgo: "1 órája",
-      avatar: "PE"
-    },
-    {
-      id: "2", 
-      user: "@analytics_pro",
-      action: "lájkolta",
-      target: "Bayern Munich predikció",
-      timeAgo: "3 órája",
-      avatar: "AP"
-    },
-    {
-      id: "3",
-      user: "@sports_analyst",
-      action: "kommentelt",
-      target: "Manchester United elemzés",
-      timeAgo: "5 órája", 
-      avatar: "SA"
-    },
-    {
-      id: "4",
-      user: "@football_fan",
-      action: "exportált CSV-t",
-      target: "Premier League adatok",
-      timeAgo: "7 órája",
-      avatar: "FF"
-    },
-    {
-      id: "5",
-      user: "@stats_lover",
-      action: "megtekintette",
-      target: "Probability Section",
-      timeAgo: "12 órája",
-      avatar: "SL"
-    },
-    {
-      id: "6",
-      user: "@winmix_user",
-      action: "szűrést alkalmazott",
-      target: "BTTS meccsek",
-      timeAgo: "15 órája",
-      avatar: "WU"
-    },
-    {
-      id: "7",
-      user: "@data_scientist",
-      action: "új predikciót követett",
-      target: "Serie A elemzések",
-      timeAgo: "18 órája",
-      avatar: "DS"
-    },
-    {
-      id: "8",
-      user: "@football_expert",
-      action: "visszajelzést küldött",
-      target: "Predikciós motor",
-      timeAgo: "20 órája",
-      avatar: "FE"
-    },
-    {
-      id: "9",
-      user: "@analytics_guru",
-      action: "kommentelt",
-      target: "Chart Section",
-      timeAgo: "22 órája",
-      avatar: "AG"
-    },
-    {
-      id: "10",
-      user: "@prediction_master",
-      action: "készített predikciót",
-      target: "Champions League",
-      timeAgo: "1 napja",
-      avatar: "PM"
-    },
-    {
-      id: "11",
-      user: "@sports_data",
-      action: "lájkolta",
-      target: "Statistics Cards",
-      timeAgo: "1 napja",
-      avatar: "SD"
-    },
-    {
-      id: "12",
-      user: "@winmix_analyst",
-      action: "kommentelt",
-      target: "Results Table",
-      timeAgo: "1 napja",
-      avatar: "WA"
-    }
-  ];
+const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps) => {
+  const [matches, setMatches] = useState<Match[]>([
+    { id: "1", homeTeam: "Real Madrid", awayTeam: "Barcelona", selected: true },
+    { id: "2", homeTeam: "Manchester United", awayTeam: "Liverpool", selected: true },
+    { id: "3", homeTeam: "Bayern Munich", awayTeam: "Borussia Dortmund", selected: true },
+    { id: "4", homeTeam: "Juventus", awayTeam: "Inter Milan", selected: true },
+    { id: "5", homeTeam: "Paris Saint-Germain", awayTeam: "Olympique Marseille", selected: true },
+    { id: "6", homeTeam: "Arsenal", awayTeam: "Chelsea", selected: true },
+    { id: "7", homeTeam: "Atletico Madrid", awayTeam: "Valencia", selected: true },
+    { id: "8", homeTeam: "AC Milan", awayTeam: "AS Roma", selected: true }
+  ]);
+
+  const toggleMatch = (matchId: string) => {
+    setMatches(matches.map(match => 
+      match.id === matchId 
+        ? { ...match, selected: !match.selected }
+        : match
+    ));
+  };
+
+  const selectedCount = matches.filter(match => match.selected).length;
+
+  const handleGeneratePredictions = () => {
+    // Generate predictions for selected matches
+    onClose();
+  };
 
   return (
     <>
@@ -133,7 +59,10 @@ const NotificationPanel = ({ isOpen, onClose }: NotificationPanelProps) => {
       >
         {/* Header */}
         <div className="flex items-center justify-between h-20 px-6 pt-5 pb-3 border-b border-border">
-          <h2 className="text-xl font-semibold">Értesítések</h2>
+          <div className="flex items-center gap-3">
+            <Brain className="size-6 text-primary" />
+            <h2 className="text-xl font-semibold">Predikció készítő</h2>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -144,36 +73,45 @@ const NotificationPanel = ({ isOpen, onClose }: NotificationPanelProps) => {
           </Button>
         </div>
 
-        {/* Notifications List */}
-        <div className="h-[calc(100vh-5rem)] px-5 pb-5 overflow-y-auto space-y-2">
-          {notifications.map((notification) => (
+        {/* Match Selection */}
+        <div className="h-[calc(100vh-8rem)] px-5 pb-5 overflow-y-auto space-y-3">
+          <div className="mb-4 p-4 bg-muted/50 rounded-lg">
+            <p className="text-sm text-muted-foreground">
+              Válassz mérkőzéseket predikció készítéséhez ({selectedCount}/8 kiválasztva)
+            </p>
+          </div>
+          
+          {matches.map((match) => (
             <div 
-              key={notification.id}
-              className="group relative flex items-center p-5 rounded-2xl hover:bg-muted/50 transition-colors cursor-pointer"
+              key={match.id}
+              className={`group relative flex items-center p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                match.selected 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border hover:border-primary/50 hover:bg-muted/30'
+              }`}
+              onClick={() => toggleMatch(match.id)}
             >
-              {/* Hover gradient effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-violet-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              
-              {/* Avatar */}
-              <div className="relative z-10 shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary to-violet-500 flex items-center justify-center text-white font-semibold text-sm">
-                {notification.avatar}
+              {/* Selection indicator */}
+              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${
+                match.selected 
+                  ? 'border-primary bg-primary' 
+                  : 'border-muted-foreground'
+              }`}>
+                {match.selected && (
+                  <div className="w-2 h-2 bg-white rounded-full" />
+                )}
               </div>
               
-              {/* Content */}
-              <div className="relative z-10 flex-1 ml-4">
-                <div className="text-sm text-muted-foreground">
-                  <span className="text-foreground font-medium">
-                    {notification.user}
+              {/* Match details */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-foreground">
+                    {match.homeTeam}
                   </span>
-                  {' '}
-                  {notification.action}
-                  {' '}
-                  <span className="text-foreground font-medium">
-                    {notification.target}
+                  <span className="text-muted-foreground font-bold mx-3">VS</span>
+                  <span className="font-medium text-foreground">
+                    {match.awayTeam}
                   </span>
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {notification.timeAgo}
                 </div>
               </div>
             </div>
@@ -183,12 +121,12 @@ const NotificationPanel = ({ isOpen, onClose }: NotificationPanelProps) => {
         {/* Footer Button */}
         <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-10">
           <Button 
-            className="winmix-btn-primary"
-            onClick={() => {
-              // Handle view all notifications
-            }}
+            className="winmix-btn-primary flex items-center gap-2"
+            onClick={handleGeneratePredictions}
+            disabled={selectedCount === 0}
           >
-            Összes értesítés
+            <Play className="size-4" />
+            Predikció indítása ({selectedCount})
           </Button>
         </div>
       </div>
@@ -196,4 +134,4 @@ const NotificationPanel = ({ isOpen, onClose }: NotificationPanelProps) => {
   );
 };
 
-export default NotificationPanel;
+export default PredictionBuilderPanel;

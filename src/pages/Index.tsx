@@ -8,7 +8,7 @@ import EnhancedChartSection from "@/components/EnhancedChartSection";
 import ResultsTable from "@/components/ResultsTable";
 import DashboardCustomizer from "@/components/DashboardCustomizer";
 import PredictionModal from "@/components/PredictionModal";
-import NotificationPanel from "@/components/NotificationPanel";
+import PredictionBuilderPanel from "@/components/NotificationPanel";
 import { DashboardContainer, DashboardItem } from "@/components/DashboardContainer";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -220,8 +220,8 @@ const Index = () => {
           onOpenChange={setPredictionModalOpen} 
         />
 
-        {/* Notification Panel */}
-        <NotificationPanel 
+        {/* Prediction Builder Panel */}
+        <PredictionBuilderPanel 
           isOpen={notificationPanelOpen}
           onClose={() => setNotificationPanelOpen(false)}
         />
