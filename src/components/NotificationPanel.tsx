@@ -1,107 +1,58 @@
-import { X, Brain, Play, ChevronDown, TrendingUp, Target, BarChart3 } from "lucide-react";
+import { X, Brain, Play, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState, useEffect } from "react";
 import { useMatches } from "@/hooks/use-matches";
 import { useToast } from "@/hooks/use-toast";
+import { MatchSelector } from "@/components/MatchSelector";
+import { PredictionResults } from "@/components/PredictionResults";
+import type { MatchStats } from "@/lib/supabase";
 
 interface PredictionBuilderPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface PredictionMatch {
-  id: string;
-  homeTeam: string;
-  awayTeam: string;
-  selected: boolean;
+interface PredictedMatch {
+  id: number;
+  home_team: string;
+  away_team: string;
 }
 
-interface PredictionResult {
-  homeTeam: string;
-  awayTeam: string;
-  homeWinChance: number;
-  drawChance: number;
-  awayWinChance: number;
-  bttsChance: number;
-  avgGoals: number;
+interface ExtendedMatchStats extends MatchStats {
+  prediction_quality?: {
+    home_qualified: boolean;
+    away_qualified: boolean;
+    draw_highlighted: boolean;
+    btts_qualified: boolean;
+    confidence_level: number;
+    recommendation: string;
+    confidence: string;
+  };
+  home_avg_goals?: number;
+  away_avg_goals?: number;
+  most_frequent_results?: Array<{
+    score: string;
+    percentage: number;
+  }>;
+  halftime_transformations?: number;
 }
-
-const TeamDropdown = ({ 
-  label, 
-  value, 
-  placeholder, 
-  options, 
-  onSelect 
-}: {
-  label: string;
-  value: string;
-  placeholder: string;
-  options: string[];
-  onSelect: (value: string) => void;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="flex-1">
-      <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">
-        {label}
-      </label>
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <button
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg bg-muted/20 border border-border hover:border-primary/50 transition-colors ${
-              isOpen ? 'border-primary/50' : ''
-            }`}
-          >
-            <span className="text-sm text-foreground truncate">
-              {value || placeholder}
-            </span>
-            <ChevronDown className={`size-4 text-muted-foreground transition ${isOpen ? 'rotate-180' : ''}`} />
-          </button>
-        </PopoverTrigger>
-        
-        <PopoverContent 
-          className="w-[var(--radix-popover-trigger-width)] p-2 bg-card/95 backdrop-blur-md border-border shadow-2xl z-[60]"
-          sideOffset={4}
-          align="start"
-        >
-          <div className="max-h-48 overflow-y-auto">
-            {options.map((option) => (
-              <button
-                key={option}
-                onClick={() => {
-                  onSelect(option);
-                  setIsOpen(false);
-                }}
-                className="w-full text-left px-3 py-2 rounded-md hover:bg-muted/50 text-sm transition text-foreground"
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-};
 
 const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps) => {
   const [teams, setTeams] = useState<string[]>([]);
-  const [predictions, setPredictions] = useState<PredictionResult[]>([]);
+  const [matches, setMatches] = useState<PredictedMatch[]>([
+    { id: 1, home_team: "", away_team: "" },
+    { id: 2, home_team: "", away_team: "" },
+    { id: 3, home_team: "", away_team: "" },
+    { id: 4, home_team: "", away_team: "" },
+    { id: 5, home_team: "", away_team: "" },
+    { id: 6, home_team: "", away_team: "" },
+    { id: 7, home_team: "", away_team: "" },
+    { id: 8, home_team: "", away_team: "" },
+  ]);
+  const [predictions, setPredictions] = useState<{ match: PredictedMatch; stats: ExtendedMatchStats | null }[]>([]);
   const [isCalculating, setIsCalculating] = useState(false);
   const { fetchTeams } = useMatches();
   const { toast } = useToast();
-  const [matches, setMatches] = useState<PredictionMatch[]>([
-    { id: "1", homeTeam: "", awayTeam: "", selected: true },
-    { id: "2", homeTeam: "", awayTeam: "", selected: true },
-    { id: "3", homeTeam: "", awayTeam: "", selected: true },
-    { id: "4", homeTeam: "", awayTeam: "", selected: true },
-    { id: "5", homeTeam: "", awayTeam: "", selected: true },
-    { id: "6", homeTeam: "", awayTeam: "", selected: true },
-    { id: "7", homeTeam: "", awayTeam: "", selected: true },
-    { id: "8", homeTeam: "", awayTeam: "", selected: true }
-  ]);
 
   useEffect(() => {
     const loadTeams = async () => {
@@ -111,71 +62,127 @@ const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps
     loadTeams();
   }, []);
 
-  const updateMatch = (matchId: string, field: 'homeTeam' | 'awayTeam', value: string) => {
+  const updateMatch = (matchId: number, side: 'home' | 'away', team: string) => {
     setMatches(matches.map(match => 
       match.id === matchId 
-        ? { ...match, [field]: value }
+        ? { ...match, [side === 'home' ? 'home_team' : 'away_team']: team }
         : match
     ));
   };
 
-  const toggleMatch = (matchId: string) => {
+  const clearMatch = (matchId: number) => {
     setMatches(matches.map(match => 
       match.id === matchId 
-        ? { ...match, selected: !match.selected }
+        ? { ...match, home_team: "", away_team: "" }
         : match
     ));
   };
 
-  const selectedCount = matches.filter(match => match.selected && match.homeTeam && match.awayTeam).length;
-  const validMatches = matches.filter(match => match.homeTeam && match.awayTeam);
+  const generatePredictionQuality = (stats: MatchStats): ExtendedMatchStats => {
+    const home_qualified = stats.home_win_percentage >= 65;
+    const away_qualified = stats.away_win_percentage >= 65;
+    const draw_highlighted = stats.draw_percentage > 30;
+    const btts_qualified = stats.btts_percentage >= 55;
+    
+    let confidence_level = 0;
+    let confidence = 'low';
+    let recommendation = '';
 
-  const calculatePrediction = (homeTeam: string, awayTeam: string): PredictionResult => {
-    // Simulate prediction calculation based on team names
-    const homeStrength = homeTeam.length % 5 + 3; // 3-7
-    const awayStrength = awayTeam.length % 5 + 3; // 3-7
-    
-    const totalStrength = homeStrength + awayStrength;
-    const homeAdvantage = 1.2; // Home advantage factor
-    
-    const baseHomeWin = (homeStrength * homeAdvantage / totalStrength) * 100;
-    const baseAwayWin = (awayStrength / totalStrength) * 100;
-    const baseDraw = 100 - baseHomeWin - baseAwayWin;
-    
-    // Normalize to 100%
-    const total = baseHomeWin + baseAwayWin + baseDraw;
-    const homeWinChance = Math.round((baseHomeWin / total) * 100);
-    const awayWinChance = Math.round((baseAwayWin / total) * 100);
-    const drawChance = 100 - homeWinChance - awayWinChance;
-    
-    const bttsChance = Math.round(35 + (Math.random() * 30)); // 35-65%
-    const avgGoals = Math.round((2.0 + Math.random() * 1.5) * 10) / 10; // 2.0-3.5
-    
+    if (home_qualified) {
+      confidence_level = stats.home_win_percentage;
+      recommendation = `Hazai győzelem ajánlott (${stats.home_win_percentage}% esély)`;
+    } else if (away_qualified) {
+      confidence_level = stats.away_win_percentage;
+      recommendation = `Vendég győzelem ajánlott (${stats.away_win_percentage}% esély)`;
+    } else if (draw_highlighted) {
+      confidence_level = stats.draw_percentage;
+      recommendation = `Magas döntetlen esély (${stats.draw_percentage}%)`;
+    } else if (btts_qualified) {
+      confidence_level = stats.btts_percentage;
+      recommendation = `BTTS ajánlott (${stats.btts_percentage}% esély)`;
+    } else {
+      confidence_level = Math.max(stats.home_win_percentage, stats.away_win_percentage, stats.draw_percentage);
+      recommendation = 'Bizonytalan kimenetel, óvatosság ajánlott';
+    }
+
+    if (confidence_level >= 65) confidence = 'high';
+    else if (confidence_level >= 50) confidence = 'medium';
+
     return {
-      homeTeam,
-      awayTeam,
-      homeWinChance,
-      drawChance,
-      awayWinChance,
-      bttsChance,
-      avgGoals
+      ...stats,
+      prediction_quality: {
+        home_qualified,
+        away_qualified,
+        draw_highlighted,
+        btts_qualified,
+        confidence_level,
+        recommendation,
+        confidence
+      },
+      home_avg_goals: Number((stats.home_wins * 2.1 / stats.total_matches).toFixed(1)),
+      away_avg_goals: Number((stats.away_wins * 1.8 / stats.total_matches).toFixed(1)),
+      most_frequent_results: [
+        { score: "1-0", percentage: 15 },
+        { score: "2-1", percentage: 12 },
+        { score: "1-1", percentage: 18 },
+        { score: "0-0", percentage: 8 },
+        { score: "2-0", percentage: 10 },
+        { score: "3-1", percentage: 7 }
+      ],
+      halftime_transformations: Math.floor(stats.comeback_count * 1.2)
     };
   };
 
+  const simulateMatchStats = (homeTeam: string, awayTeam: string): ExtendedMatchStats => {
+    // Simulate realistic stats based on team names
+    const homeStrength = homeTeam.length % 5 + 3;
+    const awayStrength = awayTeam.length % 5 + 3;
+    const totalStrength = homeStrength + awayStrength;
+    
+    const total_matches = 50 + Math.floor(Math.random() * 100);
+    const home_wins = Math.floor((homeStrength / totalStrength) * total_matches * 1.2);
+    const away_wins = Math.floor((awayStrength / totalStrength) * total_matches);
+    const draws = total_matches - home_wins - away_wins;
+    
+    const baseStats: MatchStats = {
+      total_matches,
+      home_wins,
+      away_wins,
+      draws,
+      btts_count: Math.floor(total_matches * 0.6),
+      comeback_count: Math.floor(total_matches * 0.15),
+      avg_goals: Number((2.2 + Math.random() * 1.3).toFixed(1)),
+      home_win_percentage: Number(((home_wins / total_matches) * 100).toFixed(1)),
+      away_win_percentage: Number(((away_wins / total_matches) * 100).toFixed(1)),
+      draw_percentage: Number(((draws / total_matches) * 100).toFixed(1)),
+      btts_percentage: Number((60 + Math.random() * 30).toFixed(1)),
+      comeback_percentage: Number(((Math.floor(total_matches * 0.15) / total_matches) * 100).toFixed(1))
+    };
+
+    return generatePredictionQuality(baseStats);
+  };
+
   const handleGeneratePredictions = async () => {
-    if (selectedCount === 0) return;
+    const validMatches = matches.filter(match => match.home_team && match.away_team);
+    
+    if (validMatches.length === 0) {
+      toast({
+        title: "Hiba",
+        description: "Legalább egy teljes mérkőzést be kell állítani",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsCalculating(true);
-    const selectedMatches = matches.filter(match => 
-      match.selected && match.homeTeam && match.awayTeam
-    );
     
     // Simulate calculation delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     
-    const results = selectedMatches.map(match => 
-      calculatePrediction(match.homeTeam, match.awayTeam)
-    );
+    const results = validMatches.map(match => ({
+      match,
+      stats: simulateMatchStats(match.home_team, match.away_team)
+    }));
     
     setPredictions(results);
     setIsCalculating(false);
@@ -185,6 +192,13 @@ const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps
       description: `${results.length} mérkőzés elemzése elkészült`,
     });
   };
+
+  const handleReset = () => {
+    setPredictions([]);
+    setMatches(matches.map(match => ({ ...match, home_team: "", away_team: "" })));
+  };
+
+  const validMatchCount = matches.filter(match => match.home_team && match.away_team).length;
 
   return (
     <>
@@ -198,169 +212,82 @@ const PredictionBuilderPanel = ({ isOpen, onClose }: PredictionBuilderPanelProps
       
       {/* Panel */}
       <div
-        className={`fixed right-0 top-0 h-full w-114 bg-card/95 backdrop-blur-md border-l border-border z-50 transform transition-transform duration-300 ease-out max-md:w-full ${
+        className={`fixed right-0 top-0 h-full w-[90vw] sm:w-[600px] lg:w-[800px] xl:w-[1000px] bg-card/95 backdrop-blur-md border-l border-border z-50 transform transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-20 px-6 pt-5 pb-3 border-b border-border">
+        <div className="flex items-center justify-between h-16 px-6 border-b border-border">
           <div className="flex items-center gap-3">
             <Brain className="size-6 text-primary" />
-            <h2 className="text-xl font-semibold">Predikció készítő</h2>
+            <h2 className="text-xl font-semibold text-white">Predikció készítő</h2>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="hover:bg-muted rounded-full"
-          >
-            <X className="size-6" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {predictions.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="text-white border-white/20 hover:bg-white/10"
+              >
+                <RefreshCw className="size-4 mr-2" />
+                Új predikció
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="hover:bg-muted rounded-full text-white"
+            >
+              <X className="size-6" />
+            </Button>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="h-[calc(100vh-8rem)] px-5 pb-16 overflow-y-auto space-y-4">
-          {predictions.length > 0 && (
-            <div className="mb-6 space-y-4">
-              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Target className="size-5 text-primary" />
-                Predikció eredmények
-              </h3>
-              
-              {predictions.map((pred, index) => (
-                <div key={index} className="bg-muted/30 rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-primary">#{index + 1}</span>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-foreground">
-                        {pred.homeTeam} vs {pred.awayTeam}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-success/20 rounded p-2">
-                      <div className="text-xs text-muted-foreground">Hazai</div>
-                      <div className="text-lg font-bold text-success">{pred.homeWinChance}%</div>
-                    </div>
-                    <div className="bg-warning/20 rounded p-2">
-                      <div className="text-xs text-muted-foreground">Döntetlen</div>
-                      <div className="text-lg font-bold text-warning">{pred.drawChance}%</div>
-                    </div>
-                    <div className="bg-info/20 rounded p-2">
-                      <div className="text-xs text-muted-foreground">Vendég</div>
-                      <div className="text-lg font-bold text-info">{pred.awayWinChance}%</div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2 text-center">
-                    <div className="bg-chart-2/20 rounded p-2">
-                      <div className="text-xs text-muted-foreground">BTTS</div>
-                      <div className="text-sm font-bold text-chart-2">{pred.bttsChance}%</div>
-                    </div>
-                    <div className="bg-chart-5/20 rounded p-2">
-                      <div className="text-xs text-muted-foreground">Átlag gól</div>
-                      <div className="text-sm font-bold text-chart-5">{pred.avgGoals}</div>
-                    </div>
-                  </div>
+        <div className="h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="p-6 space-y-8">
+            {predictions.length === 0 ? (
+              <>
+                <MatchSelector
+                  matches={matches}
+                  teams={teams}
+                  onUpdateMatch={updateMatch}
+                  onClearMatch={clearMatch}
+                />
+                
+                {/* Generate Button */}
+                <div className="flex justify-center pt-4">
+                  <Button 
+                    className="winmix-btn-primary flex items-center gap-2"
+                    onClick={handleGeneratePredictions}
+                    disabled={validMatchCount === 0 || isCalculating}
+                    size="lg"
+                  >
+                    {isCalculating ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                        Elemzés folyamatban...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="size-5" />
+                        Predikció generálása ({validMatchCount})
+                      </>
+                    )}
+                  </Button>
                 </div>
-              ))}
-              
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => setPredictions([])}
-              >
-                Új predikció készítése
-              </Button>
-            </div>
-          )}
-          
-          {predictions.length === 0 && (
-            <>
-              <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  Állítsd be a mérkőzéseket predikció készítéséhez ({selectedCount}/{validMatches.length} érvényes kiválasztva)
-                </p>
-              </div>
-              
-              {matches.map((match, index) => (
-                <div 
-                  key={match.id}
-                  className="group relative p-4 rounded-lg border-2 border-border bg-card/50 transition-all"
-                >
-                  {/* Match number and selection */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      #{index + 1}. mérkőzés
-                    </span>
-                    <div 
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${
-                        match.selected 
-                          ? 'border-primary bg-primary' 
-                          : 'border-muted-foreground hover:border-primary'
-                      }`}
-                      onClick={() => toggleMatch(match.id)}
-                    >
-                      {match.selected && (
-                        <div className="w-2 h-2 bg-white rounded-full" />
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Team dropdowns */}
-                  <div className="flex items-center gap-3">
-                    <TeamDropdown
-                      label="HAZAI CSAPAT"
-                      value={match.homeTeam}
-                      placeholder="Válassz hazai csapatot"
-                      options={teams}
-                      onSelect={(value) => updateMatch(match.id, 'homeTeam', value)}
-                    />
-                    
-                    <div className="flex items-center justify-center px-3 py-2 text-muted-foreground font-bold">
-                      VS
-                    </div>
-                    
-                    <TeamDropdown
-                      label="VENDÉG CSAPAT"
-                      value={match.awayTeam}
-                      placeholder="Válassz vendég csapatot"
-                      options={teams}
-                      onSelect={(value) => updateMatch(match.id, 'awayTeam', value)}
-                    />
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-
-        {/* Footer Button */}
-        {predictions.length === 0 && (
-          <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-10">
-            <Button 
-              className="winmix-btn-primary flex items-center gap-2"
-              onClick={handleGeneratePredictions}
-              disabled={selectedCount === 0 || isCalculating}
-            >
-              {isCalculating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                  Számítás...
-                </>
-              ) : (
-                <>
-                  <Play className="size-4" />
-                  Predikció indítása ({selectedCount})
-                </>
-              )}
-            </Button>
+              </>
+            ) : (
+              <PredictionResults predictions={predictions} />
+            )}
           </div>
-        )}
+        </div>
       </div>
     </>
   );
+};
 };
 
 export default PredictionBuilderPanel;
